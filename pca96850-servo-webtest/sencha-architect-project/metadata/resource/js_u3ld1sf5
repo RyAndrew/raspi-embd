@@ -1,0 +1,20 @@
+{
+    "type": "jsresource",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|userClassName": "js_u3ld1sf5",
+        "includeInBundle": true,
+        "url": "resources/Ajax.js"
+    },
+    "configAlternates": {
+        "designer|userClassName": "string",
+        "includeInBundle": "boolean",
+        "url": "uri"
+    },
+    "name": "js",
+    "designerId": "91c0aa65-5e9d-4246-9d7c-98e061f2a3d2"
+}
