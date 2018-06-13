@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"time"
@@ -23,48 +24,49 @@ func main() {
 	bus := embd.NewI2CBus(1)
 
 	pca9685 := pca9685.New(bus, 0x40)
-	pca9685.Freq = 1000
+	pca9685.Freq = 60
 	defer pca9685.Close()
 
-	if err := pca9685.SetPwm(1, 0, 2000); err != nil {
+	if err := pca9685.SetPwm(0, 0, 150); err != nil {
 		panic(err)
 	}
-	if err := pca9685.SetPwm(2, 0, 0); err != nil {
+	if err := pca9685.SetPwm(1, 0, 600); err != nil {
 		panic(err)
 	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
 
+	tick := time.Tick(time.Millisecond * 1000)
+	servoStatus := false
 
-  tick := time.Tick(time.Millisecond * 1000)
-	sleeping := false
+	for {
+		select {
+		case <-c:
+			return
+		case <-tick:
+			if servoStatus {
 
-    for {
-        select {
-	    case <- tick:
-        if(pinStatus){
+				if err := pca9685.SetPwm(0, 0, 150); err != nil {
+					panic(err)
+				}
+				if err := pca9685.SetPwm(1, 0, 600); err != nil {
+					panic(err)
+				}
 
-          if err := pca9685.SetPwm(1, 0, 2000); err != nil {
-            panic(err)
-          }
-          if err := pca9685.SetPwm(2, 0, 0); err != nil {
-            panic(err)
-          }
+				servoStatus = false
+			} else {
 
-          pinStatus = false
-        }else{
+				if err := pca9685.SetPwm(0, 0, 600); err != nil {
+					panic(err)
+				}
+				if err := pca9685.SetPwm(1, 0, 150); err != nil {
+					panic(err)
+				}
 
-          if err := pca9685.SetPwm(1, 0, 0); err != nil {
-            panic(err)
-          }
-          if err := pca9685.SetPwm(2, 0, 2000); err != nil {
-            panic(err)
-          }
-
-          pinStatus = true
-        }
-        fmt.Println("tick!")
-        }
-    }
+				servoStatus = true
+			}
+			fmt.Println("tick!")
+		}
+	}
 }
