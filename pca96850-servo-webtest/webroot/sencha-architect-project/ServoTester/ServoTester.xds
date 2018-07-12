@@ -1,0 +1,48 @@
+{
+    "name": "ServoTester",
+    "settings": {
+        "cmd": {},
+        "urlPrefixTemplate": "http://localhost:{port}/{path}",
+        "urlPrefix": "http://localhost/",
+        "exportPath": "C:/Users/arymar/Desktop/servotester2/",
+        "buildShouldOverwriteIndex": true,
+        "generateArchitectVersion": false,
+        "spacesToIndent": "tab",
+        "lineEnding": "CRLF",
+        "genTimestamps": false,
+        "cacheBust": false,
+        "installStatus": "Not Installed",
+        "canvasControls": {
+            "viewportSize": {
+                "name": "iPhone",
+                "builtIn": true,
+                "height": 480,
+                "width": 320
+            },
+            "viewportOrientation": "portrait"
+        }
+    },
+    "xdsVersion": "4.2.3",
+    "xdsBuild": 371,
+    "schemaVersion": 1,
+    "upgradeVersion": 310000000001,
+    "framework": "modern65",
+    "viewOrderMap": {
+        "view": [
+            "aa4bb463-2e22-4eef-b171-5114ad57bb15",
+            "dc06b0e0-3202-4df4-9feb-9b707c7ffea2",
+            "580e8d8b-8f3a-4a29-b3eb-6570c913d078"
+        ],
+        "store": [],
+        "controller": [],
+        "model": [],
+        "resource": [
+            "953ec7e1-c310-4fcd-90c2-b2ae45005763",
+            "43fdac9c-e1ee-41a4-acbd-2c039ef9f37b",
+            "9c65c3ee-dc72-443a-9f5d-32ceb9b4293f"
+        ],
+        "app": [
+            "application"
+        ]
+    }
+}

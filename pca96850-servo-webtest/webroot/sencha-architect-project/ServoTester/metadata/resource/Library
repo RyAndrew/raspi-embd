@@ -1,0 +1,18 @@
+{
+    "type": "libraryresource",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "basePath": "lib/ext-6.5-latest/build/",
+        "designer|userClassName": "Library"
+    },
+    "configAlternates": {
+        "basePath": "uri",
+        "designer|userClassName": "string"
+    },
+    "name": "Library",
+    "designerId": "43fdac9c-e1ee-41a4-acbd-2c039ef9f37b"
+}

@@ -1,0 +1,2103 @@
+{
+    "type": "Ext.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|initialView": true,
+        "designer|userAlias": "servotesterpanel",
+        "designer|userClassName": "ServoTesterPanel",
+        "fullscreen": true,
+        "layout": "vbox",
+        "padding": 10,
+        "title": "Servo Tester"
+    },
+    "configAlternates": {
+        "designer|initialView": "boolean",
+        "designer|userAlias": "string",
+        "designer|userClassName": "string",
+        "fullscreen": "boolean",
+        "layout": "string",
+        "padding": "auto",
+        "title": "string"
+    },
+    "name": "MyPanel",
+    "designerId": "aa4bb463-2e22-4eef-b171-5114ad57bb15",
+    "viewControllerInstanceId": "580e8d8b-8f3a-4a29-b3eb-6570c913d078",
+    "viewModelInstanceId": "dc06b0e0-3202-4df4-9feb-9b707c7ffea2",
+    "cn": [
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": 25,
+                "itemId": "headerContainer",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "height": "auto",
+                "itemId": "string",
+                "layout": "string"
+            },
+            "name": "MyContainer1",
+            "designerId": "099a4517-4bcd-416e-9060-f83234d9fc9a",
+            "cn": [
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "html": "PWM Channel #",
+                        "layout|flex": 1
+                    },
+                    "configAlternates": {
+                        "html": "string",
+                        "layout|flex": "number"
+                    },
+                    "name": "MyContainer2",
+                    "designerId": "4eab21fa-ec15-4fa0-895c-86b1ee37af13"
+                },
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "html": "Value",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "html": "string",
+                        "width": "auto"
+                    },
+                    "name": "MyContainer3",
+                    "designerId": "37a23c23-f80d-41c8-bba5-93dbea0c77b9"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo0",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "itemId": "string",
+                "layout": "string"
+            },
+            "name": "MyContainer",
+            "designerId": "9454d5cf-7b4f-4f3f-83e0-6a6fffbed8fb",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo0value}"
+                        ],
+                        "label": "0",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo0"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "b8ae943c-3be0-42b5-b607-3c4afad50765",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag0",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag0",
+                            "designerId": "256ef8ef-b9ef-4bf0-ad3b-6343312a27ac"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange0",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange0",
+                            "designerId": "08f63905-90f7-4a22-8f26-44860d7cc163"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo0value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField1",
+                    "designerId": "80819cf1-bebf-4edf-a944-c237ec54a247"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo1",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer4",
+            "designerId": "2a3deaa0-2fb6-4a54-abe5-87f6c21b46e8",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo1value}"
+                        ],
+                        "label": "1",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo1"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "8c043996-f335-4b55-af8a-b7ab5c14d025",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag1",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag1",
+                            "designerId": "67822c20-6b73-4084-ac75-e5c189aba759"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange1",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange1",
+                            "designerId": "04585a04-09cb-449b-a831-49c2760a4cde"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo1value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "5e80c892-fb33-4091-bd74-9119f39aab78"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo2",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer5",
+            "designerId": "75dbf60d-c917-4912-9891-66639cf7d5a4",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo2value}"
+                        ],
+                        "label": "2",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo2"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "cba6df56-7fe9-4598-a598-199ac75baf9e",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag2",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag2",
+                            "designerId": "084b1d3e-3fce-4064-8ade-9bde76d21cab"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange2",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange2",
+                            "designerId": "1a2367fe-edf1-4fd4-86dc-46514a0cc578"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo2value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "62853eb9-0c31-4884-b86c-f5bccb430f93"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo3",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer6",
+            "designerId": "d4a71f43-06c2-4ea0-954b-6b770e45cf7b",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo3value}"
+                        ],
+                        "label": "3",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo3"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "e72426a5-4fed-446f-8f07-7177b22555ab",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag3",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag3",
+                            "designerId": "bdf0ab31-b097-4b2c-85c7-b4459b4d052a"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange3",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange3",
+                            "designerId": "2a779eb6-7205-4ec1-8f83-d3da0e8a7256"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo3value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "1f8b4b29-6c1b-4983-8d66-ff97416ec412"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo4",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer7",
+            "designerId": "a3a03426-9ca0-459a-910f-c9e5d0468f9d",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo4value}"
+                        ],
+                        "label": "4",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo4"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "223707ba-c015-42be-9048-f7fce67118ad",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag4",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag4",
+                            "designerId": "282fa0ff-926a-405b-a814-a74f788112f2"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange4",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange4",
+                            "designerId": "e66299cc-50be-46a8-a72f-2027c5f38f08"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo4value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "e03bc8f8-a0ca-4d11-b3fc-cda4f089b31d"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo5",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer8",
+            "designerId": "aa77f03c-6877-4b40-8b72-020d83eaabba",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo5value}"
+                        ],
+                        "label": "5",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo5"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "c7854af5-0219-4019-b355-3d84bbd68af6",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag5",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag5",
+                            "designerId": "4cab9dbb-53a9-4034-bb22-566346460718"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange5",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange5",
+                            "designerId": "c9bb89c5-4708-44f3-a834-25f0f431dfa2"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo5value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "e1bcf46b-a287-4387-8c36-75439a600355"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo6",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer9",
+            "designerId": "a6110a81-d196-4ae8-b3ce-ccf47fc7917f",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo6value}"
+                        ],
+                        "label": "6",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo6"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "81f235b1-c471-4820-b592-5e41f9b8f7cf",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag6",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag6",
+                            "designerId": "4c8cb38e-b3c5-433e-9f53-21d9bf675570"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange6",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange6",
+                            "designerId": "561b0dfc-c7ca-4e74-b371-58f4b20e5ae2"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo6value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "54e8395e-8f0d-4334-a979-cacafa0feda9"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo7",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer10",
+            "designerId": "69caf4bd-cbd8-44c8-8df6-823a422f513d",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo7value}"
+                        ],
+                        "label": "7",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo7"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "88f9e389-5b9b-46be-873d-8e33e6742821",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag7",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag7",
+                            "designerId": "b2008a75-91dd-4406-82c6-5d538ed59a6a"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange7",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange7",
+                            "designerId": "afa2b613-a36e-4988-943b-0842bfef6268"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo7value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "e91ee9f6-a956-45b6-a135-f97baa015f9d"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo8",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer11",
+            "designerId": "cb5886f3-d05c-43a0-a2e5-eb00797d5c4c",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo8value}"
+                        ],
+                        "label": "8",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo8"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "70ded2a0-bad6-4dba-9000-a7022ebefe1c",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag8",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag8",
+                            "designerId": "19b8327f-c018-4be2-b77f-2c75a01cf4a2"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange8",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange8",
+                            "designerId": "c2dfc6c4-0561-49ed-87d4-693fed8abbb9"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo8value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "5e93a015-a065-4d8e-ab3b-9856f02bd8d4"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo9",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer12",
+            "designerId": "1d4b8c43-03f0-4e5e-b0fc-e774fe72189f",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo9value}"
+                        ],
+                        "label": "9",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo9"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "468674b7-f551-43c1-acc6-f34aff1f5bfa",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag9",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag9",
+                            "designerId": "fd9516b0-bd85-49a0-bd30-b5784c7b1c6b"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange9",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange9",
+                            "designerId": "fcf92714-85d8-41b0-a25e-1ed25afa1bdf"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo9value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "d540c0a1-8814-4876-9829-63f60ff17d99"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo10",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer13",
+            "designerId": "61551c62-7d44-4d25-bf1e-06b66e4b5f9e",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo10value}"
+                        ],
+                        "label": "10",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo10"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "4e0ff465-76de-4942-ba7e-105a3ab74bd9",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag10",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag10",
+                            "designerId": "f254a634-94b3-4e64-84dc-da643b5ace21"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange10",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange10",
+                            "designerId": "678144c0-c0c2-44be-8dc3-b84123325ad3"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo10value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "466ea2c8-4ed2-432c-a304-cb158c1b0fb6"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo11",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer14",
+            "designerId": "931a186c-ccc9-4745-bc48-448f6942dece",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo11value}"
+                        ],
+                        "label": "11",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo11"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "1dbe2500-6ff7-40e1-b2f1-374a5a63043f",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag11",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag11",
+                            "designerId": "6ddf3bbf-5875-4bfd-a81c-6161892ec3e6"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange11",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange11",
+                            "designerId": "795ff97b-9dd2-4428-8d9a-df02185ca810"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo11value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "b20aed24-58c5-46fb-908d-bcd95e99c57a"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo12",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer15",
+            "designerId": "2bb08bf3-d450-4017-b991-95ae98d93b29",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo12value}"
+                        ],
+                        "label": "12",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo12"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "e3f79a83-2000-42e9-8b90-2da94ad458b3",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag12",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag12",
+                            "designerId": "7186a5d6-8c65-4254-982a-8f1d04017b1e"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange12",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange12",
+                            "designerId": "85d13d5e-59b5-47cc-aa5b-1f83eacd3f03"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo12value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "2b00e699-9a9c-45ee-b8be-c9de83d368d3"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo13",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer16",
+            "designerId": "17f0109c-f464-4e29-a0e8-eda34921f4e4",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo13value}"
+                        ],
+                        "label": "13",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo13"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "34be2d28-d980-40aa-b173-d79e0823d936",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag13",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag13",
+                            "designerId": "b719daee-b0ce-4005-8aaf-c4520eb1870b"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange13",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange13",
+                            "designerId": "b7cff42c-b01d-43c1-befe-73a3569a6e2b"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo13value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "24e4c458-98e1-4916-b0a3-e70a8a4fcfa9"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo14",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer17",
+            "designerId": "f9924ad6-8e01-4a43-bfc8-d5bb199004c4",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo14value}"
+                        ],
+                        "label": "14",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo14"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "781adb82-094e-4929-b26d-846033c7cadd",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag14",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag14",
+                            "designerId": "9e19270d-636c-4b70-8e8e-3c6810dfd0e4"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange14",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange14",
+                            "designerId": "3823c845-1160-49a8-b71d-6febe9b0028a"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo14value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "c0490869-2da8-4bf6-8e40-94d75a2f9f09"
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "servo15",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "layout": "string",
+                "itemId": "string"
+            },
+            "name": "MyContainer18",
+            "designerId": "00f865c0-5e64-4b4b-82da-5f494fa797c4",
+            "cn": [
+                {
+                    "type": "Ext.field.Slider",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo15value}"
+                        ],
+                        "label": "15",
+                        "labelWidth": 30,
+                        "layout|flex": 1,
+                        "name": "servo15"
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "label": "string",
+                        "labelWidth": "auto",
+                        "layout|flex": "number",
+                        "name": "string"
+                    },
+                    "name": "MySliderField",
+                    "designerId": "209f9a8f-4b83-48d1-8523-f1afe964fe77",
+                    "cn": [
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldDrag15",
+                                "implHandler": [
+                                    "this.fieldChange(sliderfield.name,e[0]);",
+                                    ""
+                                ],
+                                "name": "drag"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldDrag15",
+                            "designerId": "31cc19ed-d5a1-43fd-b1aa-5a76ad9dbb15"
+                        },
+                        {
+                            "type": "basiceventbinding",
+                            "reference": {
+                                "name": "listeners",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "fn": "onMysliderfieldChange15",
+                                "implHandler": [
+                                    " this.fieldChange(me.name, newValue);"
+                                ],
+                                "name": "change"
+                            },
+                            "configAlternates": {
+                                "fn": "string",
+                                "implHandler": "code",
+                                "name": "string"
+                            },
+                            "name": "onMysliderfieldChange15",
+                            "designerId": "3f5911d2-b6a0-4e5d-bde2-66316e738f3b"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.field.Number",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "bind": [
+                            "{servo15value}"
+                        ],
+                        "clearable": false,
+                        "margin": "0 10 0 10",
+                        "maxValue": 100,
+                        "minValue": 0,
+                        "textAlign": "center",
+                        "width": 80
+                    },
+                    "configAlternates": {
+                        "bind": "object",
+                        "clearable": "boolean",
+                        "margin": "auto",
+                        "textAlign": "string",
+                        "width": "auto",
+                        "maxValue": "number",
+                        "minValue": "number"
+                    },
+                    "name": "MyNumberField",
+                    "designerId": "8c7b8c12-5198-40cf-a63d-4c26b9c2eafb"
+                }
+            ]
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|params": [
+                    "name",
+                    "value"
+                ],
+                "fn": "fieldChange",
+                "implHandler": [
+                    "console.log(name+' = '+value);",
+                    "",
+                    "if(this.activeRequest){",
+                    "    Ext.Ajax.abort(this.activeRequest);",
+                    "}",
+                    "",
+                    "this.activeRequest = AERP.Ajax.request({",
+                    "    url: '/updateServo',",
+                    "    params:{",
+                    "        servo: name,",
+                    "        value: value",
+                    "    },",
+                    "    success:function(response){",
+                    "        this.activeRequest = false;",
+                    "    },",
+                    "    failure:function(){",
+                    "",
+                    "    },",
+                    "    scope:this",
+                    "});",
+                    ""
+                ]
+            },
+            "configAlternates": {
+                "designer|params": "typedarray",
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "fieldChange",
+            "designerId": "2ba1c556-06cc-4af0-b79d-d5cbdf9623c2"
+        }
+    ]
+}

@@ -1,1 +1,0 @@
-{"_comment":"Please don't edit. This is Architect data.","name":"ServoTester","resources":[],"requires":["font-awesome"],"theme":"theme-triton-ec5eb1fb-844f-4695-ac6d-dde39820d870","classpath":"${app.dir}/app,${app.dir}/resources/","css":[],"js":[{"path":"resources/Ajax.js","includeInBundle":true}]}
