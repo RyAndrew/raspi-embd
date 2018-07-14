@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"time"
 
-	//_ "github.com/kidoman/embd/controller/pca9685"
 	"github.com/kidoman/embd"
 	"github.com/kidoman/embd/controller/pca9685"
 	_ "github.com/kidoman/embd/host/all"
@@ -37,8 +36,6 @@ func udpateServo(writer http.ResponseWriter, request *http.Request) {
 		outputFailure(writer)
 		return
 	}
-	// fmt.Print("servo=")
-	// fmt.Print(servo)
 
 	servoNum := servo[len(servo)-1:]
 	fmt.Print("Servo #")
@@ -58,7 +55,9 @@ func udpateServo(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	servoSetValue = ((servoSetValue * 600) / 100) + 150
+	fmt.Println("setting MOTOR scaling range between 0 and 4096")
+	servoSetValue = (servoSetValue * 4095) / 100
+
 	fmt.Printf("setting servo %d to %d\r\n", servoSetNum, servoSetValue)
 
 	if err := pca9685Inst.SetPwm(servoSetNum, 0, servoSetValue); err != nil {
@@ -77,9 +76,10 @@ func main() {
 	defer embd.CloseI2C()
 	bus := embd.NewI2CBus(1)
 
-	pca9685Inst = pca9685.New(bus, 0x40)
+	//Adafruit board is address 0x60
+	//Generic PCA9685 address is 0x40
+	pca9685Inst = pca9685.New(bus, 0x60)
 
-	//pca9685 := pca9685.New(bus, 0x40)
 	pca9685Inst.Freq = 60
 	defer pca9685Inst.Close()
 
@@ -93,70 +93,32 @@ func main() {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt)
 
-	//tick := time.Tick(time.Millisecond * 1000)
-	//servoStatus := false
-
 	srv := &http.Server{
-		Addr: ":8090",
-		//Handler:        myHandler,
+		Addr:           ":8090",
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	fs := http.FileServer(http.Dir("/home/pi/webroot"))
+	fs := http.FileServer(http.Dir("/home/pi/pca9685-servo-webtest/webroot"))
 	http.Handle("/", fs)
 	http.Handle("/updateServo", http.HandlerFunc(udpateServo))
 
 	log.Println("Listening on 8090")
 
 	go func() {
-		//err :=
-		srv.ListenAndServe()
-		// if err != nil {
-		// 	log.Printf("Httpserver: ListenAndServe() quitting: %s", err)
-		// }
+		err :=
+			srv.ListenAndServe()
+		if err != nil {
+			log.Printf("Httpserver: ListenAndServe() quitting: %s", err)
+			shutdown <- nil
+		}
 	}()
 
-	// tick := time.Tick(time.Millisecond * 1000)
-	// servoStatus := false
+	//blocking call, wait for shutdown message
+	<-shutdown
 
-	for {
-		select {
-		case <-shutdown:
-			return
-			// case <-tick:
-			// 	if servoStatus {
-
-			// 		if err := pca9685Inst.SetPwm(1, 0, 150); err != nil {
-			// 			panic(err)
-			// 		}
-			// 		if err := pca9685Inst.SetPwm(2, 0, 600); err != nil {
-			// 			panic(err)
-			// 		}
-
-			// 		servoStatus = false
-			// 	} else {
-
-			// 		if err := pca9685Inst.SetPwm(1, 0, 600); err != nil {
-			// 			panic(err)
-			// 		}
-			// 		if err := pca9685Inst.SetPwm(2, 0, 150); err != nil {
-			// 			panic(err)
-			// 		}
-
-			// 		servoStatus = true
-			// 	}
-			// 	fmt.Println("tick!")
-		}
-	}
-
-	fmt.Println()
-	log.Println("Server is shutting down")
-
-	// srv.Shutdown(nil)
-
-	log.Println("Server stopped")
+	log.Println("Server shutting down")
 	os.Exit(0)
 
 }
