@@ -1,0 +1,750 @@
+{
+    "type": "Ext.form.Panel",
+    "reference": {
+        "name": "items",
+        "type": "array"
+    },
+    "codeClass": null,
+    "userConfig": {
+        "designer|initialView": true,
+        "designer|userAlias": "rcsteeringpanel",
+        "designer|userClassName": "RcSteeringPanel",
+        "fullscreen": true,
+        "title": "RC Steering Tester"
+    },
+    "configAlternates": {
+        "designer|initialView": "boolean",
+        "designer|userAlias": "string",
+        "designer|userClassName": "string",
+        "fullscreen": "boolean",
+        "scrollable": "auto",
+        "title": "string"
+    },
+    "designerId": "b2f39c25-2aa9-445d-8149-537c726e51f5",
+    "viewControllerInstanceId": "c2fcd374-9b5c-4853-ba64-ff821433b1d3",
+    "viewModelInstanceId": "5860a2a4-649c-4332-ad24-582babee6904",
+    "cn": [
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "layout": "hbox",
+                "margin": 5,
+                "userCls": [
+                    "steering-label"
+                ]
+            },
+            "configAlternates": {
+                "layout": "string",
+                "margin": "auto",
+                "userCls": "typedarray"
+            },
+            "name": "MyContainer10",
+            "designerId": "484edea1-b71a-4cc5-9531-f5913fdfd9a2",
+            "cn": [
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "html": "L",
+                        "margin": "0 0 0 60",
+                        "width": 30
+                    },
+                    "configAlternates": {
+                        "html": "string",
+                        "margin": "auto",
+                        "width": "auto"
+                    },
+                    "name": "MyContainer13",
+                    "designerId": "7e18d4a3-4e21-47ad-83d2-b7462bd03eff"
+                },
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "layout|flex": 1
+                    },
+                    "configAlternates": {
+                        "layout|flex": "number"
+                    },
+                    "name": "MyContainer11",
+                    "designerId": "0f06e03d-9317-43c8-a6cd-2d68afeedf4c"
+                },
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "html": "R",
+                        "width": 30
+                    },
+                    "configAlternates": {
+                        "html": "string",
+                        "width": "auto"
+                    },
+                    "name": "MyContainer12",
+                    "designerId": "d259d8d5-063e-408f-85f8-43e7a5ce934d"
+                }
+            ]
+        },
+        {
+            "type": "Ext.field.Slider",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "bind": [
+                    "{steeringSetValue}"
+                ],
+                "itemId": "steeringSetPointSlider",
+                "label": "Steer",
+                "labelWidth": 50,
+                "liveUpdate": true,
+                "margin": "0 10 5 10",
+                "name": "steeringSlider",
+                "value": [
+                    "50"
+                ]
+            },
+            "configAlternates": {
+                "value": "array",
+                "bind": "object",
+                "itemId": "string",
+                "label": "string",
+                "labelWidth": "auto",
+                "margin": "auto",
+                "name": "string",
+                "twoWayBindable": "string",
+                "liveUpdate": "boolean"
+            },
+            "name": "MySliderField",
+            "designerId": "15b3ebbd-3ab1-46b9-9c81-835a2a82ae4f"
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "itemId": "hbox",
+                "layout": "hbox"
+            },
+            "configAlternates": {
+                "itemId": "string",
+                "layout": "string"
+            },
+            "name": "MyContainer5",
+            "designerId": "d05b3c3b-c5f0-475b-b068-1d45b6e46de7",
+            "cn": [
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "setPointHbox",
+                        "userCls": [
+                            "variable-box"
+                        ]
+                    },
+                    "configAlternates": {
+                        "itemId": "string",
+                        "userCls": "typedarray"
+                    },
+                    "name": "MyContainer6",
+                    "designerId": "42b1d228-3e77-4977-92de-3b81203e4387",
+                    "cn": [
+                        {
+                            "type": "Ext.Container",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "html": "Set Point & Actual",
+                                "itemId": "setPointActualLabel",
+                                "margin": 10
+                            },
+                            "configAlternates": {
+                                "html": "string",
+                                "itemId": "string",
+                                "margin": "auto"
+                            },
+                            "name": "MyContainer9",
+                            "designerId": "20210566-1bc6-4d11-884f-26a0b0056f13"
+                        },
+                        {
+                            "type": "Ext.field.Number",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "bind": [
+                                    "{steeringSetValue}"
+                                ],
+                                "clearable": false,
+                                "itemId": "steeringSetPointText",
+                                "label": "set point",
+                                "labelWidth": 70,
+                                "margin": 10,
+                                "maxValue": 100,
+                                "minValue": 0,
+                                "value": [
+                                    "50"
+                                ],
+                                "width": 150
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "bind": "object",
+                                "clearable": "boolean",
+                                "twoWayBindable": "string",
+                                "width": "auto",
+                                "value": "object",
+                                "maxValue": "number",
+                                "minValue": "number"
+                            },
+                            "name": "MyNumberField",
+                            "designerId": "221b44b5-51f3-4a16-af08-9ac238c8ec71",
+                            "cn": [
+                                {
+                                    "type": "basiceventbinding",
+                                    "reference": {
+                                        "name": "listeners",
+                                        "type": "array"
+                                    },
+                                    "codeClass": null,
+                                    "userConfig": {
+                                        "fn": "onSteeringSetPointTextChange",
+                                        "implHandler": [
+                                            "console.log(\"Steering Set = \"+newValue);"
+                                        ],
+                                        "name": "change"
+                                    },
+                                    "configAlternates": {
+                                        "fn": "string",
+                                        "name": "string",
+                                        "implHandler": "code"
+                                    },
+                                    "name": "onSteeringSetPointTextChange",
+                                    "designerId": "68c082fb-1684-4629-b596-aadcb47eef76",
+                                    "customConfigs": [
+                                        {
+                                            "group": "(Custom Properties)",
+                                            "name": "live",
+                                            "type": "string"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Ext.field.Text",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "clearable": false,
+                                "itemId": "steeringCurrent",
+                                "label": "current",
+                                "labelWidth": 70,
+                                "margin": 10,
+                                "value": [
+                                    "0",
+                                    ""
+                                ],
+                                "width": 150
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "clearable": "boolean",
+                                "value": "object",
+                                "width": "auto"
+                            },
+                            "name": "MyTextField7",
+                            "designerId": "a9611290-c79f-4cdb-ac5c-a0f76ae1bb4c"
+                        },
+                        {
+                            "type": "Ext.field.Text",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "clearable": false,
+                                "itemId": "pidError",
+                                "label": "error",
+                                "labelWidth": 70,
+                                "margin": 10,
+                                "value": [
+                                    "0",
+                                    ""
+                                ],
+                                "width": 150
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "clearable": "boolean",
+                                "value": "object",
+                                "width": "auto"
+                            },
+                            "name": "MyTextField3",
+                            "designerId": "b58564e0-6c37-4068-bf6c-747e5ab44735"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pidHbox",
+                        "userCls": [
+                            "variable-box"
+                        ]
+                    },
+                    "configAlternates": {
+                        "itemId": "string",
+                        "userCls": "typedarray"
+                    },
+                    "name": "MyContainer7",
+                    "designerId": "a4af407b-cae8-499b-9e98-abdd783b4b7d",
+                    "cn": [
+                        {
+                            "type": "Ext.Container",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "html": "PID Variables",
+                                "itemId": "pidVariablesLabel",
+                                "margin": 10
+                            },
+                            "configAlternates": {
+                                "html": "string",
+                                "itemId": "string",
+                                "margin": "auto"
+                            },
+                            "name": "MyContainer",
+                            "designerId": "33941428-dcee-492f-b578-a07c1bb4368b"
+                        },
+                        {
+                            "type": "Ext.field.Text",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "clearable": false,
+                                "itemId": "pidConstantP",
+                                "label": "P",
+                                "labelWidth": 25,
+                                "margin": 10,
+                                "value": [
+                                    "0"
+                                ],
+                                "width": 100
+                            },
+                            "configAlternates": {
+                                "clearable": "boolean",
+                                "itemId": "string",
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "value": "object",
+                                "width": "auto"
+                            },
+                            "name": "MyTextField",
+                            "designerId": "6bf09da6-ef89-42cc-9f72-6816123b169b"
+                        },
+                        {
+                            "type": "Ext.field.Text",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "clearable": false,
+                                "itemId": "pidConstantI",
+                                "label": "I",
+                                "labelWidth": 25,
+                                "margin": 10,
+                                "value": [
+                                    "0",
+                                    ""
+                                ],
+                                "width": 100
+                            },
+                            "configAlternates": {
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "clearable": "boolean",
+                                "itemId": "string",
+                                "value": "object",
+                                "width": "auto"
+                            },
+                            "name": "MyTextField1",
+                            "designerId": "e7ee42bd-bce9-42a9-9d34-2552c1e2f0f3"
+                        },
+                        {
+                            "type": "Ext.field.Text",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "clearable": false,
+                                "itemId": "pidConstantD",
+                                "label": "D",
+                                "labelWidth": 25,
+                                "margin": 10,
+                                "value": [
+                                    "0",
+                                    ""
+                                ],
+                                "width": 100
+                            },
+                            "configAlternates": {
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "itemId": "string",
+                                "clearable": "boolean",
+                                "value": "object",
+                                "width": "auto"
+                            },
+                            "name": "MyTextField2",
+                            "designerId": "f928731a-202b-4c67-a44b-e9d44eebe9cb"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "pidOutputHbox",
+                        "userCls": [
+                            "variable-box"
+                        ]
+                    },
+                    "configAlternates": {
+                        "itemId": "string",
+                        "userCls": "typedarray"
+                    },
+                    "name": "MyContainer8",
+                    "designerId": "13ea0aec-8415-4746-b8f4-7b004bdf724a",
+                    "cn": [
+                        {
+                            "type": "Ext.Container",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "html": "PID Outputs",
+                                "itemId": "pidOutputsLabel",
+                                "margin": 10
+                            },
+                            "configAlternates": {
+                                "html": "string",
+                                "margin": "auto",
+                                "itemId": "string"
+                            },
+                            "name": "MyContainer1",
+                            "designerId": "789b939e-90de-4357-841f-b547ff9d7a67"
+                        },
+                        {
+                            "type": "Ext.field.Text",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "clearable": false,
+                                "itemId": "pidIntegral",
+                                "label": "integral",
+                                "labelWidth": 60,
+                                "margin": 10
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "clearable": "boolean"
+                            },
+                            "name": "MyTextField4",
+                            "designerId": "4babb4cb-7e9a-40c9-8abd-97e729bc101f"
+                        },
+                        {
+                            "type": "Ext.field.Text",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "clearable": false,
+                                "itemId": "pidOutput",
+                                "label": "output",
+                                "labelWidth": 60,
+                                "margin": 10
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "label": "string",
+                                "labelWidth": "auto",
+                                "margin": "auto",
+                                "clearable": "boolean"
+                            },
+                            "name": "MyTextField5",
+                            "designerId": "f65af14e-8090-43b6-abab-e695cb3aa9d3"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "html": "Debug Output",
+                "itemId": "debugOutputLabel",
+                "margin": 10
+            },
+            "configAlternates": {
+                "html": "string",
+                "margin": "auto",
+                "itemId": "string"
+            },
+            "name": "MyContainer3",
+            "designerId": "c25f6047-5ddc-49c7-9185-6f2047bd9a08"
+        },
+        {
+            "type": "Ext.Container",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "height": 240,
+                "itemId": "debugOutputContainer",
+                "margin": 10,
+                "scrollable": "vertical",
+                "userCls": [
+                    "debugOutputContainer"
+                ]
+            },
+            "configAlternates": {
+                "height": "auto",
+                "itemId": "string",
+                "margin": "auto",
+                "scrollable": "auto",
+                "userCls": "typedarray"
+            },
+            "name": "MyContainer4",
+            "designerId": "46c30fa6-59a2-44be-a1e1-c022dc28bb32"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "socketInit",
+                "implHandler": [
+                    "\tthis.socket = new WebSocket('ws://'+window.location.host+'/wsapi');",
+                    "",
+                    "    this.appendDebugOutput(\"Opening Websocket\");",
+                    "",
+                    "\tthis.socket.onerror = function(){",
+                    "\t\tthis.appendDebugOutput(\"error with websocket!\");",
+                    "\t\treturn;",
+                    "\t};",
+                    "\tthis.socket.onclose = function(){",
+                    "\t\tthis.appendDebugOutput(\"websocket closed!\");",
+                    "\t\treturn;",
+                    "\t};",
+                    "\tthis.socket.onmessage = this.socketReceive.bind(this);"
+                ]
+            },
+            "configAlternates": {
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "socketInit",
+            "designerId": "f59907aa-cee0-496f-b0bc-e3feeded7a8a"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|params": [
+                    "message"
+                ],
+                "fn": "socketSend",
+                "implHandler": [
+                    "if(!this.socket){",
+                    "    console.log('Websocket not initialized');",
+                    "    return false;",
+                    "}",
+                    "",
+                    "if(this.socket.readyState !== WebSocket.OPEN){",
+                    "    console.log('Websocket not connected');",
+                    "    return false;",
+                    "}",
+                    "",
+                    "this.socket.send(message);"
+                ]
+            },
+            "configAlternates": {
+                "designer|params": "typedarray",
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "socketSend",
+            "designerId": "cc3f369e-68cd-4999-9abf-4434d8b6d07c"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|params": [
+                    "message"
+                ],
+                "fn": "socketReceive",
+                "implHandler": [
+                    "console.log('recieved message');",
+                    "console.log(message.data);",
+                    "",
+                    "this.appendDebugOutput('recieved message: '+message.data);",
+                    "",
+                    "var jsonData = JSON.parse(message.data);",
+                    "",
+                    "this.queryById('steeringCurrent').setValue(jsonData.steeringCurrent);"
+                ]
+            },
+            "configAlternates": {
+                "designer|params": "typedarray",
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "socketReceive",
+            "designerId": "65561fbe-95b6-44dc-8109-67c0dd9a97cb"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|params": [
+                    "message"
+                ],
+                "fn": "appendDebugOutput",
+                "implHandler": [
+                    "console.log(message);",
+                    "console.log(this.queryById('debugOutputContainer'));",
+                    "this.queryById('debugOutputContainer').el.dom.innerHTML += message + \"<BR>\\r\\n\";"
+                ]
+            },
+            "configAlternates": {
+                "designer|params": "typedarray",
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "appendDebugOutput",
+            "designerId": "d4051c6b-14e4-469d-a4d1-b61f6656ca08"
+        },
+        {
+            "type": "basiceventbinding",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "onFormpanelPainted",
+                "implHandler": [
+                    "this.socketInit();"
+                ],
+                "name": "painted"
+            },
+            "configAlternates": {
+                "fn": "string",
+                "implHandler": "code",
+                "name": "string"
+            },
+            "name": "onFormpanelPainted",
+            "designerId": "77d2f643-5722-4c78-92db-517bc808093f"
+        }
+    ]
+}
