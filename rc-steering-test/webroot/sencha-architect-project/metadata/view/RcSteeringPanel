@@ -244,7 +244,25 @@
                                     "userConfig": {
                                         "fn": "onSteeringSetPointTextChange",
                                         "implHandler": [
-                                            "console.log(\"Steering Set = \"+newValue);"
+                                            "newValue = newValue[0];",
+                                            "",
+                                            "if(!this.lastSteeringChangeDefered){",
+                                            "    console.log(\"Steering Set = \"+newValue);",
+                                            "    this.lastSteeringChangeDefered = true;",
+                                            "",
+                                            "    if(this.lastSent != newValue){",
+                                            "        this.sendUpdateSteering(newValue);",
+                                            "        this.lastSent = newValue;   ",
+                                            "    }",
+                                            "    Ext.defer(function(){",
+                                            "        this.lastSteeringChangeDefered = false;",
+                                            "        var currentValue = field.getValue()[0];",
+                                            "        if(this.lastSent != currentValue){",
+                                            "            this.lastSent = currentValue;",
+                                            "            this.sendUpdateSteering(currentValue);",
+                                            "        }",
+                                            "    },100,this);",
+                                            "}"
                                         ],
                                         "name": "change"
                                     },
@@ -584,7 +602,8 @@
             "codeClass": null,
             "userConfig": {
                 "height": 240,
-                "itemId": "debugOutputContainer",
+                "itemId": "debugOutputContainerOuter",
+                "layout": "vbox",
                 "margin": 10,
                 "scrollable": "vertical",
                 "userCls": [
@@ -596,10 +615,29 @@
                 "itemId": "string",
                 "margin": "auto",
                 "scrollable": "auto",
-                "userCls": "typedarray"
+                "userCls": "typedarray",
+                "layout": "string"
             },
             "name": "MyContainer4",
-            "designerId": "46c30fa6-59a2-44be-a1e1-c022dc28bb32"
+            "designerId": "46c30fa6-59a2-44be-a1e1-c022dc28bb32",
+            "cn": [
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "debugOutputContainer"
+                    },
+                    "configAlternates": {
+                        "itemId": "string"
+                    },
+                    "name": "MyContainer2",
+                    "designerId": "cf060d03-408a-44bd-811b-978fce3a5cb9"
+                }
+            ]
         },
         {
             "type": "basicfunction",
@@ -617,10 +655,12 @@
                     "",
                     "\tthis.socket.onerror = function(){",
                     "\t\tthis.appendDebugOutput(\"error with websocket!\");",
+                    "        this.socket = false;",
                     "\t\treturn;",
                     "\t};",
                     "\tthis.socket.onclose = function(){",
                     "\t\tthis.appendDebugOutput(\"websocket closed!\");",
+                    "        this.socket = false;",
                     "\t\treturn;",
                     "\t};",
                     "\tthis.socket.onmessage = this.socketReceive.bind(this);"
@@ -647,7 +687,7 @@
                 "fn": "socketSend",
                 "implHandler": [
                     "if(!this.socket){",
-                    "    console.log('Websocket not initialized');",
+                    "    console.log('Websocket not started or failed');",
                     "    return false;",
                     "}",
                     "",
@@ -680,8 +720,8 @@
                 ],
                 "fn": "socketReceive",
                 "implHandler": [
-                    "console.log('recieved message');",
-                    "console.log(message.data);",
+                    "// console.log('recieved message');",
+                    "// console.log(message.data);",
                     "",
                     "this.appendDebugOutput('recieved message: '+message.data);",
                     "",
@@ -707,13 +747,42 @@
             "codeClass": null,
             "userConfig": {
                 "designer|params": [
+                    "value"
+                ],
+                "fn": "sendUpdateSteering",
+                "implHandler": [
+                    "this.socketSend(Ext.encode({'updateSteering':value}));"
+                ]
+            },
+            "configAlternates": {
+                "designer|params": "typedarray",
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "sendUpdateSteering",
+            "designerId": "5952f4de-7c2c-4457-bea1-a7cfdd04431f"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|params": [
                     "message"
                 ],
                 "fn": "appendDebugOutput",
                 "implHandler": [
-                    "console.log(message);",
-                    "console.log(this.queryById('debugOutputContainer'));",
-                    "this.queryById('debugOutputContainer').el.dom.innerHTML += message + \"<BR>\\r\\n\";"
+                    "// console.log(message);",
+                    "// console.log(this.queryById('debugOutputContainer'));",
+                    "var dom = this.queryById('debugOutputContainer').el.dom;",
+                    "// console.log(dom);",
+                    "dom.innerHTML += message + \"<BR>\\r\\n\";",
+                    "// console.log(this.queryById('debugOutputContainerOuter'));",
+                    "containerDom = this.queryById('debugOutputContainerOuter').bodyElement.dom;",
+                    "containerDom.scrollTop = dom.clientHeight;"
                 ]
             },
             "configAlternates": {

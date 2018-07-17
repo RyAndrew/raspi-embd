@@ -203,10 +203,17 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         {
             xtype: 'container',
             height: 240,
-            itemId: 'debugOutputContainer',
+            itemId: 'debugOutputContainerOuter',
             userCls: 'debugOutputContainer',
             margin: 10,
-            scrollable: 'vertical'
+            scrollable: 'vertical',
+            layout: 'vbox',
+            items: [
+                {
+                    xtype: 'container',
+                    itemId: 'debugOutputContainer'
+                }
+            ]
         }
     ],
     listeners: {
@@ -214,7 +221,25 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
     },
 
     onSteeringSetPointTextChange: function(field, newValue, oldValue, eOpts) {
-        console.log("Steering Set = "+newValue);
+        newValue = newValue[0];
+
+        if(!this.lastSteeringChangeDefered){
+            console.log("Steering Set = "+newValue);
+            this.lastSteeringChangeDefered = true;
+
+            if(this.lastSent != newValue){
+                this.sendUpdateSteering(newValue);
+                this.lastSent = newValue;
+            }
+            Ext.defer(function(){
+                this.lastSteeringChangeDefered = false;
+                var currentValue = field.getValue()[0];
+                if(this.lastSent != currentValue){
+                    this.lastSent = currentValue;
+                    this.sendUpdateSteering(currentValue);
+                }
+            },100,this);
+        }
     },
 
     onFormpanelPainted: function(sender, element, eOpts) {
@@ -228,10 +253,12 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
 
         	this.socket.onerror = function(){
         		this.appendDebugOutput("error with websocket!");
+                this.socket = false;
         		return;
         	};
         	this.socket.onclose = function(){
         		this.appendDebugOutput("websocket closed!");
+                this.socket = false;
         		return;
         	};
         	this.socket.onmessage = this.socketReceive.bind(this);
@@ -239,7 +266,7 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
 
     socketSend: function(message) {
         if(!this.socket){
-            console.log('Websocket not initialized');
+            console.log('Websocket not started or failed');
             return false;
         }
 
@@ -252,8 +279,8 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
     },
 
     socketReceive: function(message) {
-        console.log('recieved message');
-        console.log(message.data);
+        // console.log('recieved message');
+        // console.log(message.data);
 
         this.appendDebugOutput('recieved message: '+message.data);
 
@@ -262,10 +289,19 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         this.queryById('steeringCurrent').setValue(jsonData.steeringCurrent);
     },
 
+    sendUpdateSteering: function(value) {
+        this.socketSend(Ext.encode({'updateSteering':value}));
+    },
+
     appendDebugOutput: function(message) {
-        console.log(message);
-        console.log(this.queryById('debugOutputContainer'));
-        this.queryById('debugOutputContainer').el.dom.innerHTML += message + "<BR>\r\n";
+        // console.log(message);
+        // console.log(this.queryById('debugOutputContainer'));
+        var dom = this.queryById('debugOutputContainer').el.dom;
+        // console.log(dom);
+        dom.innerHTML += message + "<BR>\r\n";
+        // console.log(this.queryById('debugOutputContainerOuter'));
+        containerDom = this.queryById('debugOutputContainerOuter').bodyElement.dom;
+        containerDom.scrollTop = dom.clientHeight;
     }
 
 });
