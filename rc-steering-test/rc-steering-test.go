@@ -19,6 +19,7 @@ import (
 )
 
 var pca9685Inst *pca9685.PCA9685
+var steeringAdcValue uint16
 
 func outputFailure(writer http.ResponseWriter) {
 
@@ -84,7 +85,7 @@ type webSocketClient struct {
 }
 
 func webSocketClientReader() {
-
+	//_, message, err := conn.ReadMessage()
 }
 func webSocketClientWriter(conn *websocket.Conn, socketData []byte) {
 	if err := conn.WriteMessage(websocket.TextMessage, socketData); err != nil {
@@ -101,7 +102,6 @@ func registerClient(conn *websocket.Conn) {
 	connectedClients = append(connectedClients, client)
 	mutex.Unlock()
 
-	//_, message, err := conn.ReadMessage()
 }
 func unRegisterClient(conn *websocket.Conn) {
 	log.Println("Closed WebSocket Connection UnRegistering")
@@ -129,16 +129,27 @@ func webSocketSendJsonToAllClients(jsonData interface{}) {
 		client.conn.WriteJSON(jsonData)
 	}
 }
+func setSteeringPosition(pos uint8) {
+
+}
 func adcTicker(bus embd.I2CBus) {
-	tick := time.Tick(time.Millisecond * 2000)
+
+	initAdc(bus)
+
+	adcValueBroadcastTicker := time.Tick(time.Millisecond * 500)
+	adcReadTicker := time.Tick(time.Millisecond * 250)
+	// var adcTickNumber uint16 = 0
 	for {
 		select {
-		case <-tick:
-
+		case <-adcValueBroadcastTicker:
 			jsonData := make(map[string]interface{})
-			jsonData["steeringCurrent"] = fmt.Sprintf("%v", readAdcValue(bus))
+			jsonData["steeringCurrent"] = fmt.Sprintf("%v", steeringAdcValue)
 
 			webSocketSendJsonToAllClients(jsonData)
+		case <-adcReadTicker:
+			// adcTickNumber++
+			steeringAdcValue = readAdcValue(bus)
+			// fmt.Printf("%4.d Read ADC Value %d\n", adcTickNumber, steeringAdcValue)
 		}
 	}
 }
