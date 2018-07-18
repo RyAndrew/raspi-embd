@@ -533,14 +533,16 @@
                                 "itemId": "pidIntegral",
                                 "label": "integral",
                                 "labelWidth": 60,
-                                "margin": 10
+                                "margin": 10,
+                                "width": 150
                             },
                             "configAlternates": {
                                 "itemId": "string",
                                 "label": "string",
                                 "labelWidth": "auto",
                                 "margin": "auto",
-                                "clearable": "boolean"
+                                "clearable": "boolean",
+                                "width": "auto"
                             },
                             "name": "MyTextField4",
                             "designerId": "4babb4cb-7e9a-40c9-8abd-97e729bc101f"
@@ -557,17 +559,196 @@
                                 "itemId": "pidOutput",
                                 "label": "output",
                                 "labelWidth": 60,
-                                "margin": 10
+                                "margin": 10,
+                                "width": 150
                             },
                             "configAlternates": {
                                 "itemId": "string",
                                 "label": "string",
                                 "labelWidth": "auto",
                                 "margin": "auto",
-                                "clearable": "boolean"
+                                "clearable": "boolean",
+                                "width": "auto"
                             },
                             "name": "MyTextField5",
                             "designerId": "f65af14e-8090-43b6-abab-e695cb3aa9d3"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.Container",
+                    "reference": {
+                        "name": "items",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "itemId": "buttonsHbox",
+                        "layout": "vbox",
+                        "userCls": [
+                            "variable-box"
+                        ]
+                    },
+                    "configAlternates": {
+                        "itemId": "string",
+                        "userCls": "typedarray",
+                        "layout": "string"
+                    },
+                    "name": "MyContainer14",
+                    "designerId": "f220a61a-5d56-4f6a-b4f2-0e677139d0c1",
+                    "cn": [
+                        {
+                            "type": "Ext.Container",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "html": "Control",
+                                "itemId": "buttonsLabel",
+                                "margin": 10
+                            },
+                            "configAlternates": {
+                                "html": "string",
+                                "margin": "auto",
+                                "itemId": "string"
+                            },
+                            "name": "MyContainer1",
+                            "designerId": "ece37303-0624-4576-a008-b5023ca5e913"
+                        },
+                        {
+                            "type": "Ext.Button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "margin": "10 20 10 20",
+                                "text": "Stop"
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "margin": "auto",
+                                "text": "string"
+                            },
+                            "name": "MyButton",
+                            "designerId": "d1f879fc-4bb4-4ed5-964f-9d3acedb3de6",
+                            "cn": [
+                                {
+                                    "type": "basiceventbinding",
+                                    "reference": {
+                                        "name": "listeners",
+                                        "type": "array"
+                                    },
+                                    "codeClass": null,
+                                    "userConfig": {
+                                        "fn": "onMybuttonTap",
+                                        "implHandler": [
+                                            "this.stopSteeringMovement();"
+                                        ],
+                                        "name": "tap"
+                                    },
+                                    "configAlternates": {
+                                        "fn": "string",
+                                        "implHandler": "code",
+                                        "name": "string"
+                                    },
+                                    "name": "onMybuttonTap",
+                                    "designerId": "6353d42f-0d0e-4759-848d-89c7aabf6a3c"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Ext.Button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "margin": "10 20 10 20",
+                                "text": "Stop Steering Loop"
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "margin": "auto",
+                                "text": "string"
+                            },
+                            "name": "MyButton2",
+                            "designerId": "df9d875d-92ca-4259-8167-af6a758706d1",
+                            "cn": [
+                                {
+                                    "type": "basiceventbinding",
+                                    "reference": {
+                                        "name": "listeners",
+                                        "type": "array"
+                                    },
+                                    "codeClass": null,
+                                    "userConfig": {
+                                        "fn": "onMybuttonTap1",
+                                        "implHandler": [
+                                            "this.socketSend(Ext.encode({",
+                                            "    action:'stopSteeringControlLoop'",
+                                            "}));"
+                                        ],
+                                        "name": "tap"
+                                    },
+                                    "configAlternates": {
+                                        "fn": "string",
+                                        "implHandler": "code",
+                                        "name": "string"
+                                    },
+                                    "name": "onMybuttonTap1",
+                                    "designerId": "1a614f46-fbe1-4fae-9f24-0d3fc88a0269"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Ext.Button",
+                            "reference": {
+                                "name": "items",
+                                "type": "array"
+                            },
+                            "codeClass": null,
+                            "userConfig": {
+                                "margin": "10 20 10 20",
+                                "text": "Start Steering Loop"
+                            },
+                            "configAlternates": {
+                                "itemId": "string",
+                                "margin": "auto",
+                                "text": "string"
+                            },
+                            "name": "MyButton3",
+                            "designerId": "e99bc785-59e9-4005-bfb0-ca042525ee4a",
+                            "cn": [
+                                {
+                                    "type": "basiceventbinding",
+                                    "reference": {
+                                        "name": "listeners",
+                                        "type": "array"
+                                    },
+                                    "codeClass": null,
+                                    "userConfig": {
+                                        "fn": "onMybuttonTap11",
+                                        "implHandler": [
+                                            "this.socketSend(Ext.encode({",
+                                            "    action:'startSteeringControlLoop'",
+                                            "}));"
+                                        ],
+                                        "name": "tap"
+                                    },
+                                    "configAlternates": {
+                                        "fn": "string",
+                                        "implHandler": "code",
+                                        "name": "string"
+                                    },
+                                    "name": "onMybuttonTap11",
+                                    "designerId": "b5ccd2fb-0dea-41f4-a65e-1f3d8a0828ba"
+                                }
+                            ]
                         }
                     ]
                 }
@@ -653,16 +834,16 @@
                     "",
                     "    this.appendDebugOutput(\"Opening Websocket\");",
                     "",
-                    "\tthis.socket.onerror = function(){",
+                    "\tthis.socket.onerror = (function(){",
                     "\t\tthis.appendDebugOutput(\"error with websocket!\");",
                     "        this.socket = false;",
                     "\t\treturn;",
-                    "\t};",
-                    "\tthis.socket.onclose = function(){",
+                    "\t}).bind(this);",
+                    "\tthis.socket.onclose = (function(){",
                     "\t\tthis.appendDebugOutput(\"websocket closed!\");",
                     "        this.socket = false;",
                     "\t\treturn;",
-                    "\t};",
+                    "\t}).bind(this);",
                     "\tthis.socket.onmessage = this.socketReceive.bind(this);"
                 ]
             },
@@ -715,6 +896,28 @@
             },
             "codeClass": null,
             "userConfig": {
+                "fn": "stopSteeringMovement",
+                "implHandler": [
+                    "this.socketSend(Ext.encode({",
+                    "    action:'stopSteeringMovement'",
+                    "}));"
+                ]
+            },
+            "configAlternates": {
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "stopSteeringMovement",
+            "designerId": "4ffffa73-bc40-43d3-9f7a-5fb15b7aa8dc"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
                 "designer|params": [
                     "message"
                 ],
@@ -751,7 +954,10 @@
                 ],
                 "fn": "sendUpdateSteering",
                 "implHandler": [
-                    "this.socketSend(Ext.encode({'updateSteering':value}));"
+                    "this.socketSend(Ext.encode({",
+                    "    action:'updateSteering',",
+                    "    value:value",
+                    "}));"
                 ]
             },
             "configAlternates": {

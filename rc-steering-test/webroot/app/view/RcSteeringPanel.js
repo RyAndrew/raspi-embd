@@ -21,7 +21,8 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         'RcSteering.view.RcSteeringPanelViewModel',
         'Ext.Container',
         'Ext.field.Slider',
-        'Ext.field.Number'
+        'Ext.field.Number',
+        'Ext.Button'
     ],
 
     viewModel: {
@@ -177,6 +178,7 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                         {
                             xtype: 'textfield',
                             itemId: 'pidIntegral',
+                            width: 150,
                             margin: 10,
                             label: 'integral',
                             labelWidth: 60,
@@ -185,10 +187,49 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                         {
                             xtype: 'textfield',
                             itemId: 'pidOutput',
+                            width: 150,
                             margin: 10,
                             label: 'output',
                             labelWidth: 60,
                             clearable: false
+                        }
+                    ]
+                },
+                {
+                    xtype: 'container',
+                    itemId: 'buttonsHbox',
+                    userCls: 'variable-box',
+                    layout: 'vbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            itemId: 'buttonsLabel',
+                            html: 'Control',
+                            margin: 10
+                        },
+                        {
+                            xtype: 'button',
+                            margin: '10 20 10 20',
+                            text: 'Stop',
+                            listeners: {
+                                tap: 'onMybuttonTap'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            margin: '10 20 10 20',
+                            text: 'Stop Steering Loop',
+                            listeners: {
+                                tap: 'onMybuttonTap1'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            margin: '10 20 10 20',
+                            text: 'Start Steering Loop',
+                            listeners: {
+                                tap: 'onMybuttonTap11'
+                            }
                         }
                     ]
                 }
@@ -242,6 +283,22 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         }
     },
 
+    onMybuttonTap: function(button, e, eOpts) {
+        this.stopSteeringMovement();
+    },
+
+    onMybuttonTap1: function(button, e, eOpts) {
+        this.socketSend(Ext.encode({
+            action:'stopSteeringControlLoop'
+        }));
+    },
+
+    onMybuttonTap11: function(button, e, eOpts) {
+        this.socketSend(Ext.encode({
+            action:'startSteeringControlLoop'
+        }));
+    },
+
     onFormpanelPainted: function(sender, element, eOpts) {
         this.socketInit();
     },
@@ -251,16 +308,16 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
 
             this.appendDebugOutput("Opening Websocket");
 
-        	this.socket.onerror = function(){
+        	this.socket.onerror = (function(){
         		this.appendDebugOutput("error with websocket!");
                 this.socket = false;
         		return;
-        	};
-        	this.socket.onclose = function(){
+        	}).bind(this);
+        	this.socket.onclose = (function(){
         		this.appendDebugOutput("websocket closed!");
                 this.socket = false;
         		return;
-        	};
+        	}).bind(this);
         	this.socket.onmessage = this.socketReceive.bind(this);
     },
 
@@ -278,6 +335,12 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         this.socket.send(message);
     },
 
+    stopSteeringMovement: function() {
+        this.socketSend(Ext.encode({
+            action:'stopSteeringMovement'
+        }));
+    },
+
     socketReceive: function(message) {
         // console.log('recieved message');
         // console.log(message.data);
@@ -290,7 +353,10 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
     },
 
     sendUpdateSteering: function(value) {
-        this.socketSend(Ext.encode({'updateSteering':value}));
+        this.socketSend(Ext.encode({
+            action:'updateSteering',
+            value:value
+        }));
     },
 
     appendDebugOutput: function(message) {
