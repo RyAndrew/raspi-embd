@@ -1,14 +1,14 @@
 package main
 
 import (
+	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
-	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -18,64 +18,28 @@ import (
 	_ "github.com/kidoman/embd/host/all"
 )
 
-var pca9685Inst *pca9685.PCA9685
-var steeringAdcValue uint16
+const (
+	// Time allowed to write a message to the peer.
+	writeWait = 10 * time.Second
 
-func outputFailure(writer http.ResponseWriter) {
+	// Time allowed to read the next pong message from the peer.
+	pongWait = 30 * time.Second
 
-	writer.Header().Set("Content-Type", "application/json")
-	io.WriteString(writer, `{"success":false}`)
+	// Send pings to peer with this period. Must be less than pongWait.
+	pingPeriod = (pongWait * 9) / 10
 
-}
-func udpateServo(writer http.ResponseWriter, request *http.Request) {
-	request.ParseForm()
+	// Maximum message size allowed from peer.
+	maxMessageSize = 512
+)
 
-	servo := request.FormValue("servo")
-	if servo == "" {
-		outputFailure(writer)
-		return
-	}
-	value := request.FormValue("value")
-	if value == "" {
-		outputFailure(writer)
-		return
-	}
+// var (
+// 	newline = []byte{'\n'}
+// 	space   = []byte{' '}
+// )
 
-	servoNum := servo[len(servo)-1:]
-	fmt.Print("Servo #")
-	fmt.Print(servoNum)
-	fmt.Print(" = ")
-	fmt.Println(value)
+var WebSocketClientMap map[*WebSocketClient]bool
 
-	servoSetNum, err := strconv.Atoi(servoNum)
-
-	if err != nil {
-		outputFailure(writer)
-		return
-	}
-	servoSetValue, err := strconv.Atoi(value)
-	if err != nil {
-		outputFailure(writer)
-		return
-	}
-
-	fmt.Println("setting MOTOR scaling range between 0 and 4096")
-	servoSetValue = (servoSetValue * 4095) / 100
-
-	fmt.Printf("setting servo %v to %v\r\n", servoSetNum, servoSetValue)
-
-	if err := pca9685Inst.SetPwm(servoSetNum, 0, servoSetValue); err != nil {
-		panic(err)
-	}
-
-	writer.Header().Set("Content-Type", "application/json")
-	io.WriteString(writer, `{"success":true}`)
-}
-
-var connectedClients []*webSocketClient
-var mutex = &sync.Mutex{}
-
-type webSocketClient struct {
+type WebSocketClient struct {
 
 	// The websocket connection.
 	conn *websocket.Conn
@@ -84,76 +48,238 @@ type webSocketClient struct {
 	send chan []byte
 }
 
-func webSocketClientReader() {
-	//_, message, err := conn.ReadMessage()
+var pca9685Inst *pca9685.PCA9685
+var steeringAdcValue uint16
+var steeringMax uint16 = 2047
+var steeringTargetPoint uint16 = steeringMax / 2
+
+var stopSteeringLoopChan = make(chan struct{}, 1)
+
+func outputFailure(writer http.ResponseWriter) {
+
+	writer.Header().Set("Content-Type", "application/json")
+	io.WriteString(writer, `{"success":false}`)
+
 }
-func webSocketClientWriter(conn *websocket.Conn, socketData []byte) {
-	if err := conn.WriteMessage(websocket.TextMessage, socketData); err != nil {
-		log.Printf("Error writing to socket: %s", err)
-		unRegisterClient(conn)
-		return
+
+func (c *WebSocketClient) webSocketClientReader() {
+	defer func() {
+		unRegisterClient(c)
+		c.conn.Close()
+	}()
+	c.conn.SetReadLimit(maxMessageSize)
+	c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	for {
+		_, message, err := c.conn.ReadMessage()
+		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err)
+			}
+			break
+		}
+		//message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		//c.hub.broadcast <- message
+		processClientMessage(message)
+	}
+}
+func (c *WebSocketClient) webSocketClientWriter() {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		c.conn.Close()
+	}()
+	for {
+		select {
+		case message, ok := <-c.send:
+			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if !ok {
+				// The hub closed the channel.
+				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+
+			w, err := c.conn.NextWriter(websocket.TextMessage)
+			if err != nil {
+				return
+			}
+			w.Write(message)
+
+			// Add queued chat messages to the current websocket message.
+			n := len(c.send)
+			for i := 0; i < n; i++ {
+				//w.Write(newline)
+				w.Write(<-c.send)
+			}
+
+			if err := w.Close(); err != nil {
+				return
+			}
+		case <-ticker.C:
+			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			fmt.Println("Sending socket ping")
+			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				return
+			}
+		}
 	}
 }
 func registerClient(conn *websocket.Conn) {
 
-	client := &webSocketClient{conn: conn, send: make(chan []byte, 256)}
+	client := &WebSocketClient{conn: conn, send: make(chan []byte, 256)}
 
-	mutex.Lock()
-	connectedClients = append(connectedClients, client)
-	mutex.Unlock()
+	WebSocketClientMap[client] = true
+
+	go client.webSocketClientReader()
+	go client.webSocketClientWriter()
 
 }
-func unRegisterClient(conn *websocket.Conn) {
+func unRegisterClient(client *WebSocketClient) {
+
 	log.Println("Closed WebSocket Connection UnRegistering")
 
-	mutex.Lock()
-	var connectedClientsNew []*webSocketClient
-
-	//remove the disconnected client from the connectedClients slice
-	for _, client := range connectedClients {
-		if client.conn == conn {
-			continue
-		} else {
-			connectedClientsNew = append(connectedClientsNew, client)
-		}
+	if _, ok := WebSocketClientMap[client]; ok {
+		delete(WebSocketClientMap, client)
+		close(client.send)
 	}
-
-	connectedClients = connectedClientsNew
-	mutex.Unlock()
 }
 func webSocketSendJsonToAllClients(jsonData interface{}) {
 
 	//log.Printf("writing to %d clients\n", len(connectedClients))
-
-	for _, client := range connectedClients {
+	for client := range WebSocketClientMap {
 		client.conn.WriteJSON(jsonData)
 	}
 }
-func setSteeringPosition(pos uint8) {
 
+func processClientMessage(message []byte) {
+
+	jsonData := make(map[string]interface{})
+
+	json.Unmarshal(message, &jsonData)
+	fmt.Println(string(message))
+	//fmt.Printf("%+v\n", jsonData)
+
+	if _, ok := jsonData["action"]; !ok {
+		log.Println("Invalid Message, no action param")
+		return
+	}
+
+	switch jsonData["action"] {
+	case "updateSteering":
+		//fmt.Printf("%+v\n", jsonData["value"])
+		pos := jsonData["value"].(float64)
+		setSteeringPosition(pos)
+		break
+	case "stopSteeringMovement":
+		stopSteeringMovement()
+		break
+	case "stopSteeringControlLoop":
+		stopSteeringLoopChan <- struct{}{}
+		break
+	case "startSteeringControlLoop":
+		stopSteeringLoopChan <- struct{}{}
+
+		for len(stopSteeringLoopChan) > 0 {
+			<-stopSteeringLoopChan
+		}
+		go startSteeringControlLoop()
+		break
+	}
+
+}
+
+func stopSteeringMovement() {
+	setPwmChanPercent(2, 0)
+	setPwmChanPercent(3, 0)
+	setPwmChanPercent(4, 0)
+}
+func setSteeringPosition(pos float64) {
+	//fmt.Printf("set pos=%v, ", pos)
+	steeringTargetPoint = uint16(float64(steeringMax) * pos / 100.0)
+	//fmt.Printf("set steeringTargetPoint=%v\n", steeringTargetPoint)
+	//fmt.Printf("steeringMax %v * pos %v / 100\n", steeringMax, pos)
+}
+func steeringSetPointAdjust() {
+	successfulThreshold := .09
+
+	fmt.Printf("set=%v, actual=%v\n", steeringTargetPoint, steeringAdcValue)
+
+	if float64(steeringAdcValue) < float64(steeringTargetPoint)*float64(1+successfulThreshold) {
+		if float64(steeringAdcValue) > float64(steeringTargetPoint)*(1-successfulThreshold) {
+			stopSteeringMovement()
+			return
+		}
+	}
+	if steeringTargetPoint > steeringAdcValue {
+		setPwmChanPercent(2, 60)
+		setPwmChanPercent(3, 100)
+		setPwmChanPercent(4, 0)
+	} else {
+		setPwmChanPercent(2, 60)
+		setPwmChanPercent(3, 0)
+		setPwmChanPercent(4, 100)
+	}
+}
+func startSteeringControlLoop() {
+	fmt.Println("startSteeringControlLoop")
+	checkSteeringPositionTicker := time.Tick(time.Millisecond * 30)
+	for {
+		select {
+		case <-checkSteeringPositionTicker:
+			steeringSetPointAdjust()
+		case <-stopSteeringLoopChan:
+			stopSteeringMovement()
+			return
+		}
+	}
+}
+func setPwmChanPercent(chanNo int, percent int) {
+
+	//fmt.Printf("setting PWM chan=%d ", chanNo)
+
+	pwmCalc := 4095.0 * percent / 100.0
+	//fmt.Printf(", calc=%v ", pwmCalc)
+	pwmSet := int(pwmCalc)
+	//fmt.Printf(", set=%v \n", pwmSet)
+
+	if err := pca9685Inst.SetPwm(chanNo, 0, pwmSet); err != nil {
+		panic(err)
+	}
 }
 func adcTicker(bus embd.I2CBus) {
 
 	initAdc(bus)
 
-	adcValueBroadcastTicker := time.Tick(time.Millisecond * 500)
-	adcReadTicker := time.Tick(time.Millisecond * 250)
-	// var adcTickNumber uint16 = 0
+	steeringAdcValue = readAdcValue(bus)
+
+	adcValueBroadcastTicker := time.Tick(time.Millisecond * 150)
+	adcReadTicker := time.Tick(time.Millisecond * 20)
+	var adcTickNumber uint16 = 0
 	for {
 		select {
 		case <-adcValueBroadcastTicker:
 			jsonData := make(map[string]interface{})
 			jsonData["steeringCurrent"] = fmt.Sprintf("%v", steeringAdcValue)
+			jsonData["steeringTargetPoint"] = fmt.Sprintf("%v", steeringTargetPoint)
 
 			webSocketSendJsonToAllClients(jsonData)
 		case <-adcReadTicker:
-			// adcTickNumber++
+			adcTickNumber++
+
+			//start := time.Now()
+
 			steeringAdcValue = readAdcValue(bus)
-			// fmt.Printf("%4.d Read ADC Value %d\n", adcTickNumber, steeringAdcValue)
+
+			//elapsed := time.Since(start)
+
+			//fmt.Printf("%4.d Read ADC Value %d\n", adcTickNumber, steeringAdcValue)
+
+			//fmt.Printf(" time: %s\n", elapsed)
 		}
 	}
 }
 func main() {
+	flag.Parse()
 
 	if err := embd.InitI2C(); err != nil {
 		panic(err)
@@ -161,10 +287,12 @@ func main() {
 	defer embd.CloseI2C()
 	i2cBus := embd.NewI2CBus(1)
 
+	//https://github.com/adafruit/Adafruit-Motor-HAT-Python-Library/blob/master/Adafruit_MotorHAT/Adafruit_PWM_Servo_Driver.py
 	//Adafruit board is address 0x60
 	//Generic PCA9685 address is 0x40
 	pca9685Inst = pca9685.New(i2cBus, 0x60)
 	pca9685Inst.Freq = 60
+	pca9685Inst.Wake()
 	defer pca9685Inst.Close()
 
 	shutdown := make(chan os.Signal, 1)
@@ -180,8 +308,8 @@ func main() {
 
 	fs := http.FileServer(http.Dir("/home/pi/rc-steering-test/webroot"))
 	http.Handle("/", fs)
-	http.Handle("/updateServo", http.HandlerFunc(udpateServo))
 
+	WebSocketClientMap = make(map[*WebSocketClient]bool)
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -209,10 +337,12 @@ func main() {
 	}()
 
 	go adcTicker(i2cBus)
+	go startSteeringControlLoop()
 
 	//block waiting for channel
 	<-shutdown
 
+	stopSteeringMovement()
 	log.Println("Server is shutting down")
 	os.Exit(0)
 
