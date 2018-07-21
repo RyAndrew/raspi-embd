@@ -50,7 +50,7 @@ type WebSocketClient struct {
 
 var pca9685Inst *pca9685.PCA9685
 var steeringAdcValue uint16
-var steeringMax uint16 = 2047
+var steeringMax uint16 = 1730
 var steeringTargetPoint uint16 = steeringMax / 2
 
 var stopSteeringLoopChan = make(chan struct{}, 1)
@@ -147,7 +147,8 @@ func webSocketSendJsonToAllClients(jsonData interface{}) {
 
 	//log.Printf("writing to %d clients\n", len(connectedClients))
 	for client := range WebSocketClientMap {
-		client.conn.WriteJSON(jsonData)
+		jsonText, _ := json.Marshal(jsonData)
+		client.send <- jsonText
 	}
 }
 
@@ -200,9 +201,10 @@ func setSteeringPosition(pos float64) {
 	//fmt.Printf("steeringMax %v * pos %v / 100\n", steeringMax, pos)
 }
 func steeringSetPointAdjust() {
-	successfulThreshold := .09
 
-	fmt.Printf("set=%v, actual=%v\n", steeringTargetPoint, steeringAdcValue)
+	successfulThreshold := .05
+
+	//fmt.Printf("set=%v, actual=%v\n", steeringTargetPoint, steeringAdcValue)
 
 	if float64(steeringAdcValue) < float64(steeringTargetPoint)*float64(1+successfulThreshold) {
 		if float64(steeringAdcValue) > float64(steeringTargetPoint)*(1-successfulThreshold) {
