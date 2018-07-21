@@ -15,6 +15,27 @@
 
 Ext.define('RcSteering.view.RcSteeringPanelViewModel', {
     extend: 'Ext.app.ViewModel',
-    alias: 'viewmodel.rcsteeringpanel'
+    alias: 'viewmodel.rcsteeringpanel',
+
+    requires: [
+        'Ext.data.Store',
+        'Ext.data.field.Field'
+    ],
+
+    stores: {
+        steeringChartStore: {
+            fields: [
+                {
+                    name: 'x'
+                },
+                {
+                    name: 'steeringCurrent'
+                },
+                {
+                    name: 'steeringTargetPoint'
+                }
+            ]
+        }
+    }
 
 });

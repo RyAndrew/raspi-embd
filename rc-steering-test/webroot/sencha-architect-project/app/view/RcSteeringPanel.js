@@ -19,10 +19,13 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
 
     requires: [
         'RcSteering.view.RcSteeringPanelViewModel',
-        'Ext.Container',
         'Ext.field.Slider',
         'Ext.field.Number',
-        'Ext.Button'
+        'Ext.Button',
+        'Ext.chart.CartesianChart',
+        'Ext.chart.axis.Category',
+        'Ext.chart.axis.Numeric',
+        'Ext.chart.series.Line'
     ],
 
     viewModel: {
@@ -255,6 +258,74 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                     itemId: 'debugOutputContainer'
                 }
             ]
+        },
+        {
+            xtype: 'cartesian',
+            height: 250,
+            itemId: 'steeringChart',
+            colors: [
+                '#115fa6',
+                '#94ae0a',
+                '#a61120',
+                '#ff8809',
+                '#ffd13e',
+                '#a61187',
+                '#24ad9a',
+                '#7c7474',
+                '#a66111'
+            ],
+            bind: {
+                store: '{steeringChartStore}'
+            },
+            axes: [
+                {
+                    type: 'category',
+                    fields: [
+                        null
+                    ],
+                    title: 'Time'
+                },
+                {
+                    type: 'numeric',
+                    grid: {
+                        odd: {
+                            fill: '#e8e8e8'
+                        }
+                    },
+                    maximum: 1800,
+                    minimum: 0,
+                    position: 'left',
+                    title: 'Position'
+                }
+            ],
+            series: [
+                {
+                    type: 'line',
+                    colors: [
+                        'rgba(200,0,0,0.3)'
+                    ],
+                    style: {
+                        stroke: 'rgb(200,0,0)',
+                        step: true
+                    },
+                    xField: 'x',
+                    yField: 'steeringCurrent',
+                    nullStyle: 'connect'
+                },
+                {
+                    type: 'line',
+                    colors: [
+                        'rgba(0,200,0,0.3)'
+                    ],
+                    style: {
+                        stroke: 'rgb(0,200,0)',
+                        step: true
+                    },
+                    xField: 'x',
+                    yField: 'steeringTargetPoint',
+                    nullStyle: 'connect'
+                }
+            ]
         }
     ],
     listeners: {
@@ -279,7 +350,7 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                     this.lastSent = currentValue;
                     this.sendUpdateSteering(currentValue);
                 }
-            },100,this);
+            },50,this);
         }
     },
 
@@ -305,6 +376,12 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
 
     socketInit: function() {
         	this.socket = new WebSocket('ws://'+window.location.host+'/wsapi');
+
+            this.recievedMessages = 0;
+            this.chartedMessages = 0;
+
+            this.chartArray = [];
+            this.steeringChart = this.queryById('steeringChart');
 
             this.appendDebugOutput("Opening Websocket");
 
@@ -344,10 +421,33 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
     socketReceive: function(message) {
         // console.log('recieved message');
         // console.log(message.data);
+        this.recievedMessages++;
+        this.chartedMessages++;
 
-        this.appendDebugOutput('recieved message: '+message.data);
+        var chartStore = this.lookupViewModel().getStore('steeringChartStore');
+
+        if(this.recievedMessages > 100){
+            this.recievedMessages = 0;
+            this.clearDebugOutput();
+            //chartStore.removeAll();
+        }
+        //this.appendDebugOutput('recieved message: '+message.data);
 
         var jsonData = JSON.parse(message.data);
+
+        //if(chartStore.count() > 100){
+        //    chartStore.removeAt(0,2);
+        //}
+
+        this.steeringChart.suspendAnimation();
+        if(this.chartArray.length > 100){
+            this.chartArray.shift();
+        }
+        this.chartArray.push([this.chartedMessages, jsonData.steeringCurrent, jsonData.steeringTargetPoint]);
+
+        chartStore.loadData(this.chartArray);
+
+        this.steeringChart.resumeAnimation
 
         this.queryById('steeringCurrent').setValue(jsonData.steeringCurrent);
     },
@@ -357,6 +457,14 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
             action:'updateSteering',
             value:value
         }));
+    },
+
+    clearDebugOutput: function() {
+        // console.log(message);
+        // console.log(this.queryById('debugOutputContainer'));
+        var dom = this.queryById('debugOutputContainer').el.dom;
+        // console.log(dom);
+        dom.innerHTML = "";
     },
 
     appendDebugOutput: function(message) {

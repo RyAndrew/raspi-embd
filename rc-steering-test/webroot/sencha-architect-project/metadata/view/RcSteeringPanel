@@ -252,7 +252,7 @@
                                             "",
                                             "    if(this.lastSent != newValue){",
                                             "        this.sendUpdateSteering(newValue);",
-                                            "        this.lastSent = newValue;   ",
+                                            "        this.lastSent = newValue;",
                                             "    }",
                                             "    Ext.defer(function(){",
                                             "        this.lastSteeringChangeDefered = false;",
@@ -261,7 +261,7 @@
                                             "            this.lastSent = currentValue;",
                                             "            this.sendUpdateSteering(currentValue);",
                                             "        }",
-                                            "    },100,this);",
+                                            "    },50,this);",
                                             "}"
                                         ],
                                         "name": "change"
@@ -821,6 +821,185 @@
             ]
         },
         {
+            "type": "Ext.chart.CartesianChart",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "colors": [
+                    "[\"#115fa6\", \"#94ae0a\", \"#a61120\", \"#ff8809\", \"#ffd13e\", \"#a61187\", \"#24ad9a\", \"#7c7474\", \"#a66111\"]"
+                ],
+                "height": 250,
+                "itemId": "steeringChart",
+                "store": [
+                    "{steeringChartStore}"
+                ]
+            },
+            "configAlternates": {
+                "store": "binding",
+                "smooth": "boolean",
+                "colors": "array",
+                "height": "auto",
+                "itemId": "string"
+            },
+            "name": "MyLineChart",
+            "designerId": "9117387a-1082-48a2-8344-9ebc6e634ee4",
+            "isBuiltIn": true,
+            "iconCls": "icon-line-chart",
+            "autoName": "MyLineChart",
+            "customConfigs": [
+                {
+                    "group": "(Custom Properties)",
+                    "name": "smooth",
+                    "type": "string"
+                }
+            ],
+            "cn": [
+                {
+                    "type": "Ext.chart.axis.Category",
+                    "reference": {
+                        "name": "axes",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "fields": [
+                            "x"
+                        ],
+                        "title": "Time"
+                    },
+                    "configAlternates": {
+                        "fields": "typedarray",
+                        "title": "string"
+                    },
+                    "name": "MyCategoryAxis",
+                    "designerId": "e77a7680-15d3-4805-8552-ee02571406de"
+                },
+                {
+                    "type": "Ext.chart.axis.Numeric",
+                    "reference": {
+                        "name": "axes",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "grid": [
+                            "{",
+                            "    odd: {",
+                            "        fill: '#e8e8e8'",
+                            "    }",
+                            "}"
+                        ],
+                        "maximum": 1800,
+                        "minimum": 0,
+                        "position": "left",
+                        "title": "Position"
+                    },
+                    "configAlternates": {
+                        "grid": "object",
+                        "maximum": "number",
+                        "minimum": "number",
+                        "position": "string",
+                        "title": "string"
+                    },
+                    "name": "MyNumericAxis",
+                    "designerId": "d13bcb1d-4c9f-42f1-93ec-6876744d7e90"
+                },
+                {
+                    "type": "Ext.chart.series.Line",
+                    "reference": {
+                        "name": "series",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "colors": [
+                            "[\"rgba(200,0,0,0.3)\"]"
+                        ],
+                        "nullStyle": "connect",
+                        "style": [
+                            "{",
+                            "    stroke: 'rgb(200,0,0)',",
+                            "    step:true",
+                            "}"
+                        ],
+                        "xField": "x",
+                        "yField": "steeringCurrent"
+                    },
+                    "configAlternates": {
+                        "smooth": "boolean",
+                        "defaultSmoothness": "number",
+                        "colors": "array",
+                        "nullStyle": "string",
+                        "style": "object",
+                        "xField": "datafield",
+                        "yField": "datafield"
+                    },
+                    "name": "MyLineSeries",
+                    "designerId": "22858622-1c46-458e-817b-96b9ab5bc1c5",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "smooth",
+                            "type": "string"
+                        },
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "defaultSmoothness",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "type": "Ext.chart.series.Line",
+                    "reference": {
+                        "name": "series",
+                        "type": "array"
+                    },
+                    "codeClass": null,
+                    "userConfig": {
+                        "colors": [
+                            "[\"rgba(0,200,0,0.3)\"]"
+                        ],
+                        "nullStyle": "connect",
+                        "style": [
+                            "{",
+                            "    stroke: 'rgb(0,200,0)',",
+                            "    step:true",
+                            "}"
+                        ],
+                        "xField": "x",
+                        "yField": "steeringTargetPoint"
+                    },
+                    "configAlternates": {
+                        "colors": "array",
+                        "style": "object",
+                        "xField": "datafield",
+                        "yField": "datafield",
+                        "smooth": "boolean",
+                        "defaultSmoothness": "number",
+                        "nullStyle": "string"
+                    },
+                    "name": "MyLineSeries2",
+                    "designerId": "053db578-7751-48b7-a4f1-e06d584f269e",
+                    "customConfigs": [
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "smooth",
+                            "type": "string"
+                        },
+                        {
+                            "group": "(Custom Properties)",
+                            "name": "defaultSmoothness",
+                            "type": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "type": "basicfunction",
             "reference": {
                 "name": "items",
@@ -831,6 +1010,12 @@
                 "fn": "socketInit",
                 "implHandler": [
                     "\tthis.socket = new WebSocket('ws://'+window.location.host+'/wsapi');",
+                    "",
+                    "    this.recievedMessages = 0;",
+                    "    this.chartedMessages = 0;",
+                    "",
+                    "    this.chartArray = [];",
+                    "    this.steeringChart = this.queryById('steeringChart');",
                     "",
                     "    this.appendDebugOutput(\"Opening Websocket\");",
                     "",
@@ -925,10 +1110,33 @@
                 "implHandler": [
                     "// console.log('recieved message');",
                     "// console.log(message.data);",
+                    "this.recievedMessages++;",
+                    "this.chartedMessages++;",
                     "",
-                    "this.appendDebugOutput('recieved message: '+message.data);",
+                    "var chartStore = this.lookupViewModel().getStore('steeringChartStore');",
+                    "",
+                    "if(this.recievedMessages > 100){",
+                    "    this.recievedMessages = 0;",
+                    "    this.clearDebugOutput();",
+                    "    //chartStore.removeAll();",
+                    "}",
+                    "//this.appendDebugOutput('recieved message: '+message.data);",
                     "",
                     "var jsonData = JSON.parse(message.data);",
+                    "",
+                    "//if(chartStore.count() > 100){",
+                    "//    chartStore.removeAt(0,2);",
+                    "//}",
+                    "",
+                    "this.steeringChart.suspendAnimation();",
+                    "if(this.chartArray.length > 100){",
+                    "    this.chartArray.shift();",
+                    "}",
+                    "this.chartArray.push([this.chartedMessages, jsonData.steeringCurrent, jsonData.steeringTargetPoint]);",
+                    "",
+                    "chartStore.loadData(this.chartArray);",
+                    "",
+                    "this.steeringChart.resumeAnimation",
                     "",
                     "this.queryById('steeringCurrent').setValue(jsonData.steeringCurrent);"
                 ]
@@ -967,6 +1175,30 @@
             },
             "name": "sendUpdateSteering",
             "designerId": "5952f4de-7c2c-4457-bea1-a7cfdd04431f"
+        },
+        {
+            "type": "basicfunction",
+            "reference": {
+                "name": "items",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "fn": "clearDebugOutput",
+                "implHandler": [
+                    "// console.log(message);",
+                    "// console.log(this.queryById('debugOutputContainer'));",
+                    "var dom = this.queryById('debugOutputContainer').el.dom;",
+                    "// console.log(dom);",
+                    "dom.innerHTML = \"\";"
+                ]
+            },
+            "configAlternates": {
+                "fn": "string",
+                "implHandler": "code"
+            },
+            "name": "clearDebugOutput",
+            "designerId": "1827a445-ef50-48ca-8468-0417f07aacde"
         },
         {
             "type": "basicfunction",

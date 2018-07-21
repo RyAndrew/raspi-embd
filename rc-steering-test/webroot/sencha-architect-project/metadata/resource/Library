@@ -7,12 +7,16 @@
     "codeClass": null,
     "userConfig": {
         "basePath": "lib/ext-6.5-latest/build/",
-        "designer|userClassName": "Library"
+        "designer|userClassName": "Library",
+        "libraryRequires": [
+            "sencha-charts"
+        ]
     },
     "configAlternates": {
         "designer|userClassName": "string",
         "theme": "string",
-        "basePath": "uri"
+        "basePath": "uri",
+        "libraryRequires": "typedarray"
     },
     "name": "Library",
     "designerId": "0bed7e48-343e-4468-9c92-33f050cfcaf9"
