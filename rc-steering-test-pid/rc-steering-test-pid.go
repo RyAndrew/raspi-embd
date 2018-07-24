@@ -55,6 +55,17 @@ var steeringAdcValue uint16
 var steeringMax uint16 = 1730
 var steeringTargetPoint uint16 = steeringMax / 2
 
+var throttlePwmFreq float64 = 50.0
+
+//var throttlePwmFreqUsCalc float64 = 1000 / float64(throttlePwmFreq) / 4096 * 1000
+
+var throttlePwmFreq1ms int = 200
+var throttlePwmFreqUsCalc float64 = float64(throttlePwmFreq1ms) / 1000
+
+var throttlePwmChannel int = 0
+var throttlePwmMax float64 = 1000.0
+var throttlePwmOffset float64 = 1000.0
+
 var stopSteeringLoopChan = make(chan struct{}, 1)
 
 func outputFailure(writer http.ResponseWriter) {
@@ -247,14 +258,46 @@ func stopSteeringMovement() {
 	setPwmChanPercent(4, 0)
 }
 func stopThrottle() {
-	setPwmChanPercent(8, 0)
-	setPwmChanPercent(9, 0)
-	setPwmChanPercent(10, 0)
+	setThrottleMicroSeconds(0)
 }
 func setThrottle(pos float64) {
+	//subtract too to start at 800ms
+	throttleMax := 1000.0 //only operate within the first 3ms
+	//940 or less = brake
 
-	setPwmChanPercent(0, int(pos))
+	microSecondSetValue := int(pos * throttleMax / 100)
+	//+ (throttlePwmOffset - 200) // add 800ms?
+	// + (throttlePwmMax / 2)
+	setThrottleMicroSeconds(microSecondSetValue + 1000)
+}
 
+func setThrottleFullRange(pulseEnd int) {
+
+	fmt.Printf("set pulseEnd=%v\n", pulseEnd)
+	if err := pca9685Inst.SetPwm(throttlePwmChannel, 0, pulseEnd); err != nil {
+		panic(err)
+
+	}
+}
+func setThrottleArm() {
+	setThrottleMicroSeconds(1500)
+}
+func setThrottleCalibration() {
+
+	setThrottleMicroSeconds(2000) // 2000us
+	time.Sleep(time.Second * 8)
+	setThrottleMicroSeconds(1000) // 1000us
+	time.Sleep(time.Second * 8)
+	setThrottleMicroSeconds(1500) // 1500us
+}
+func setThrottleMicroSeconds(pulseLengthUs int) {
+
+	pulseStart := int(math.Round(float64(pulseLengthUs) * throttlePwmFreqUsCalc))
+	//pulseWidth := int(math.Round(1200 * throttlePwmFreqUsCalc))
+	fmt.Printf("set pulseLengthUs=%v, throttlePwmFreqUsCalc=%v, pulseStart=%v\n", pulseLengthUs, throttlePwmFreqUsCalc, pulseStart)
+	if err := pca9685Inst.SetPwm(throttlePwmChannel, 0, pulseStart); err != nil {
+		panic(err)
+	}
 }
 func setSteeringPosition(pos float64) {
 	//fmt.Printf("set pos=%v, ", pos)
@@ -381,9 +424,14 @@ func main() {
 	//Adafruit board is address 0x60
 	//Generic PCA9685 address is 0x40
 	pca9685Inst = pca9685.New(i2cBus, 0x60)
-	pca9685Inst.Freq = 60
+	pca9685Inst.Freq = throttlePwmFreq
 	pca9685Inst.Wake()
 	defer pca9685Inst.Close()
+
+	fmt.Println("setting 1ms on port 15")
+	if err := pca9685Inst.SetPwm(15, 0, throttlePwmFreq1ms); err != nil {
+		panic(err)
+	}
 
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt)
@@ -430,6 +478,9 @@ func main() {
 	pidControl.SetOutputLimits(-100, 100)
 	pidSet = 50
 	pidControl.Set(pidSet)
+
+	//setThrottleCalibration()
+	setThrottleArm()
 
 	go adcTicker(i2cBus)
 	go startSteeringControlLoop()
