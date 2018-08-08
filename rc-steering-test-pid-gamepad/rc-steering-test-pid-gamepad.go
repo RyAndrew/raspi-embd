@@ -7,13 +7,16 @@ import (
 	"io"
 	"log"
 	"math"
+	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"time"
 
 	"github.com/RyAndrew/pidctrl"
 	"github.com/gorilla/websocket"
+	"github.com/tarm/serial"
 
 	"github.com/kidoman/embd"
 	"github.com/kidoman/embd/controller/pca9685"
@@ -32,6 +35,9 @@ const (
 
 	// Maximum message size allowed from peer.
 	maxMessageSize = 512
+
+	arduinoLedBlinkRed = "5"
+	arduinoLedBlue     = "2"
 )
 
 // var (
@@ -52,6 +58,19 @@ type WebSocketClient struct {
 
 var pca9685Inst *pca9685.PCA9685
 var steeringAdcValue uint16
+
+var jawMax int = 1820
+var jawMin int = 1510
+var jawRange int = jawMax - jawMin
+
+var trexTiltMax int = 1690
+var trexTiltMin int = 1000
+var trexTiltRange int = trexTiltMax - trexTiltMin
+
+var trexPanMax int = 1000
+var trexPanMin int = 2000
+var trexPanRange int = trexPanMax - trexPanMin
+
 var steeringMax uint16 = 1130
 var steeringMin uint16 = 890
 var steeringRange uint16 = steeringMax - steeringMin
@@ -62,6 +81,7 @@ var throttlePwmFreq float64 = 50.0
 //var throttlePwmFreqUsCalc float64 = 1000 / float64(throttlePwmFreq) / 4096 * 1000
 
 var throttlePwmFreq1ms int = 200
+var throttlePwmFreq1500us int = 300
 var throttlePwmFreqUsCalc float64 = float64(throttlePwmFreq1ms) / 1000
 
 var throttlePwmChannel int = 0
@@ -69,6 +89,8 @@ var throttlePwmMax float64 = 1000.0
 var throttlePwmOffset float64 = 1000.0
 
 var stopSteeringLoopChan = make(chan struct{}, 1)
+
+var serialPortMessages = make(chan []byte, 25)
 
 func outputFailure(writer http.ResponseWriter) {
 
@@ -181,6 +203,30 @@ func processClientMessage(client *WebSocketClient, message []byte) {
 	}
 
 	switch jsonData["action"] {
+	case "updateTrexPan":
+		if fmt.Sprintf("%T", jsonData["value"]) != "float64" {
+			fmt.Printf("Invalid updateTrexPan value %v\n", jsonData["value"])
+			break
+		}
+		pos := jsonData["value"].(float64)
+		setTrexPanPos(pos)
+		break
+	case "updateTrexTilt":
+		if fmt.Sprintf("%T", jsonData["value"]) != "float64" {
+			fmt.Printf("Invalid updateTrexTilt value %v\n", jsonData["value"])
+			break
+		}
+		pos := jsonData["value"].(float64)
+		setTrexTiltPos(pos)
+		break
+	case "updateTrexJaw":
+		if fmt.Sprintf("%T", jsonData["value"]) != "float64" {
+			fmt.Printf("Invalid updateTrexJaw value %v\n", jsonData["value"])
+			break
+		}
+		throttleFloat := jsonData["value"].(float64)
+		setTrexJawPos(throttleFloat)
+		break
 	case "updateThrottle":
 		if fmt.Sprintf("%T", jsonData["value"]) != "float64" {
 			fmt.Printf("Invalid updateThrottle value %v\n", jsonData["value"])
@@ -197,6 +243,26 @@ func processClientMessage(client *WebSocketClient, message []byte) {
 		}
 		posFloat := jsonData["value"].(float64)
 		setSteeringPosition(posFloat)
+		break
+	case "arduinoCommand":
+		//fmt.Printf("%v\n", jsonData["command"])
+		fmt.Println("arduinoCommand")
+		fmt.Printf("%T\n", jsonData["command"])
+		fmt.Printf("%v\n", jsonData["command"])
+		if fmt.Sprintf("%T", jsonData["command"]) != "string" {
+			fmt.Printf("Invalid updateSteering value %v\n", jsonData["value"])
+			break
+		}
+		command := jsonData["command"].(string)
+
+		serialPortMessages <- []byte(command)
+		break
+	case "playnextsound":
+		go playnextsound()
+		break
+	case "trexscream":
+		go trexScreamMp3()
+		serialPortMessages <- []byte(arduinoLedBlinkRed)
 		break
 	case "updatePidConstants":
 		//fmt.Printf("%+v\n", jsonData["value"])
@@ -258,6 +324,46 @@ func stopSteeringMovement() {
 	setPwmChanPercent(2, 0)
 	setPwmChanPercent(3, 0)
 	setPwmChanPercent(4, 0)
+}
+func setTrexJawPos(pos float64) {
+	pos = pos / 1000
+
+	updateTrexJawPulse := float64(jawRange)*pos + float64(jawMin)
+	//940 or less = brake
+
+	fmt.Printf("updateTrexJaw pulse %v\n", updateTrexJawPulse)
+
+	//pulseWidth := int(math.Round(1200 * throttlePwmFreqUsCalc))
+	//	fmt.Printf("set pulseLengthUs=%v, throttlePwmFreqUsCalc=%v, pulseStart=%v\n", pulseLengthUs, throttlePwmFreqUsCalc, pulseStart)
+	if err := pca9685Inst.SetPwm(15, 0, int(throttlePwmFreqUsCalc*updateTrexJawPulse)); err != nil {
+		panic(err)
+	}
+}
+func setTrexPanPos(pos float64) {
+	pos = pos / 1000
+
+	updatePulse := float64(trexPanRange)*pos + float64(trexPanMin)
+
+	fmt.Printf("updateTrexPan pulse %v\n", updatePulse)
+
+	//pulseWidth := int(math.Round(1200 * throttlePwmFreqUsCalc))
+	//	fmt.Printf("set pulseLengthUs=%v, throttlePwmFreqUsCalc=%v, pulseStart=%v\n", pulseLengthUs, throttlePwmFreqUsCalc, pulseStart)
+	if err := pca9685Inst.SetPwm(1, 0, int(throttlePwmFreqUsCalc*updatePulse)); err != nil {
+		panic(err)
+	}
+}
+func setTrexTiltPos(pos float64) {
+	pos = 1 - (pos / 1000)
+
+	updatePulse := float64(trexTiltRange)*pos + float64(trexTiltMin)
+
+	fmt.Printf("updateTrexTilt pulse %v\n", updatePulse)
+
+	//pulseWidth := int(math.Round(1200 * throttlePwmFreqUsCalc))
+	//	fmt.Printf("set pulseLengthUs=%v, throttlePwmFreqUsCalc=%v, pulseStart=%v\n", pulseLengthUs, throttlePwmFreqUsCalc, pulseStart)
+	if err := pca9685Inst.SetPwm(14, 0, int(throttlePwmFreqUsCalc*updatePulse)); err != nil {
+		panic(err)
+	}
 }
 func stopThrottle() {
 	setThrottleMicroSeconds(0)
@@ -397,6 +503,63 @@ func setPwmChanPercent(chanNo int, percent int) {
 		panic(err)
 	}
 }
+func serialPortReader(serialPortToRead *serial.Port) {
+	fmt.Println("Starting serial port read loop")
+	buf := make([]byte, 1)
+	minimumMessageSeparator := 30 * time.Millisecond
+	lastMessage := time.Now()
+	for {
+		readMessage, err := serialPortToRead.Read(buf)
+		if err != nil {
+			log.Fatal(err)
+		}
+		now := time.Now()
+		if time.Since(lastMessage) > minimumMessageSeparator {
+			fmt.Print("Serial Message:\n")
+			lastMessage = now
+		}
+		fmt.Printf("%s", buf[:readMessage])
+	}
+}
+func serialPortWriter() {
+
+	comConfig := &serial.Config{Name: "/dev/ttyS0", Baud: 115200}
+	serialPort, err := serial.OpenPort(comConfig)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Printf("Open serial port %v\n", comConfig.Name)
+
+	go serialPortReader(serialPort)
+	redEyesTicker := time.Tick(time.Second * 10)
+	redEyesTickerCurrent := 1
+	//var adcTickNumber uint16 = 0
+	for {
+		select {
+		case message := <-serialPortMessages:
+			fmt.Printf("sending serial command: %s\n", message)
+			_, err = serialPort.Write([]byte(fmt.Sprintf("%s", message)))
+			if err != nil {
+				log.Println(err)
+			}
+			break
+		case <-redEyesTicker:
+
+			//serialPortMessages <- []byte(fmt.Sprintf("%v", redEyesTickerCurrent))
+
+			//fmt.Printf("writing to serial port: %v\n", redEyesTickerCurrent)
+			// _, err = serialPort.Write([]byte())
+			// if err != nil {
+			// 	log.Println(err)
+			// }
+			redEyesTickerCurrent++
+			if redEyesTickerCurrent > 8 {
+				redEyesTickerCurrent = 1
+			}
+			break
+		}
+	}
+}
 func adcTicker(bus embd.I2CBus) {
 
 	initAdc(bus)
@@ -435,6 +598,97 @@ func adcTicker(bus embd.I2CBus) {
 		}
 	}
 }
+
+var mp3filesCurrent int = 0
+
+var mp3files = [8]string{
+	"Welcome... to Jurassic park.mp3",
+	//"Theme song.mp3",
+	"trex hold on to your butts.mp3",
+	"toast.mp3",
+	"trex you didnt say the magic word.mp3",
+	"trex clever girl.mp3",
+	"TRex growls.mp3",
+	"Malcom Laugh.mp3",
+	"meat.mp3",
+	//"God creates dinosaurs.mp3"
+}
+
+var mp3filesLen = len(mp3files) - 1
+
+func playnextsound() {
+	playMp3(mp3files[mp3filesCurrent])
+	fmt.Printf("playing %v\n", mp3files[mp3filesCurrent])
+	mp3filesCurrent++
+	if mp3filesCurrent > mp3filesLen {
+		mp3filesCurrent = 0
+	}
+}
+func trexScreamMp3() {
+	playMp3("TRex screams.mp3")
+	time.Sleep(150 * time.Millisecond)
+	setTrexJawPos(500)
+	time.Sleep(40 * time.Millisecond)
+	setTrexJawPos(600)
+	time.Sleep(120 * time.Millisecond)
+	setTrexJawPos(800)
+	time.Sleep(180 * time.Millisecond)
+	setTrexJawPos(400)
+	time.Sleep(120 * time.Millisecond)
+	setTrexJawPos(700)
+	time.Sleep(180 * time.Millisecond)
+	setTrexJawPos(800)
+	time.Sleep(120 * time.Millisecond)
+	setTrexJawPos(700)
+	time.Sleep(180 * time.Millisecond)
+	setTrexJawPos(600)
+	time.Sleep(140 * time.Millisecond)
+	setTrexJawPos(500)
+	time.Sleep(100 * time.Millisecond)
+	setTrexJawPos(800)
+	time.Sleep(120 * time.Millisecond)
+	setTrexJawPos(500)
+	time.Sleep(100 * time.Millisecond)
+	setTrexJawPos(600)
+	time.Sleep(100 * time.Millisecond)
+	setTrexJawPos(800)
+	time.Sleep(120 * time.Millisecond)
+	setTrexJawPos(500)
+	time.Sleep(100 * time.Millisecond)
+	setTrexJawPos(20)
+}
+func playMp3(fileName string) {
+	//"God creates dinosaurs.mp3"
+	//"Theme song.mp3"
+	//"TRex growls.mp3"
+	//"TRex screams.mp3"
+	//"Welcome... to Jurassic park.mp3"
+	//"Malcom Laugh.mp3"
+
+	cmd := exec.Command("mpg123", "/home/pi/trex-sounds/"+fileName)
+	err := cmd.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+func setVolume() {
+	cmd := exec.Command("amixer", "sset", "'PCM'", "200%")
+	err := cmd.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+func getOutboundIP() net.IP {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+	return localAddr.IP
+}
 func main() {
 	flag.Parse()
 
@@ -452,8 +706,16 @@ func main() {
 	pca9685Inst.Wake()
 	defer pca9685Inst.Close()
 
-	fmt.Println("setting 1ms on port 15")
-	if err := pca9685Inst.SetPwm(15, 0, throttlePwmFreq1ms); err != nil {
+	// fmt.Println("setting 1ms on port 15")
+	// if err := pca9685Inst.SetPwm(15, 0, throttlePwmFreq1500us); err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("setting 1ms on port 14")
+	// if err := pca9685Inst.SetPwm(14, 0, throttlePwmFreq1500us); err != nil {
+	// 	panic(err)
+	// }
+	fmt.Println("setting 1ms on port 1")
+	if err := pca9685Inst.SetPwm(1, 0, int(throttlePwmFreqUsCalc*float64(jawMin))); err != nil {
 		panic(err)
 	}
 
@@ -498,7 +760,7 @@ func main() {
 		}
 	}()
 
-	pidControl = pidctrl.NewPIDController(5, .15, .15)
+	pidControl = pidctrl.NewPIDController(1.5, .03, .03)
 	pidControl.SetOutputLimits(-100, 100)
 	pidSet = 50
 	pidControl.Set(pidSet)
@@ -511,11 +773,25 @@ func main() {
 	go adcTicker(i2cBus)
 	go startSteeringControlLoop()
 
+	setVolume()
+	playMp3("Theme song.mp3")
+
+	go serialPortWriter()
+
+	ip := getOutboundIP()
+	fmt.Printf("outbound ip: %v\n", ip)
+	serialPortMessages <- []byte(fmt.Sprintf("t1%v", ip))
+
 	//block waiting for channel
 	<-shutdown
 
 	stopSteeringMovement()
 	stopThrottle()
+
+	setTrexPanPos(500)
+	setTrexTiltPos(500)
+	setTrexJawPos(50)
+
 	log.Println("Server is shutting down")
 	os.Exit(0)
 
