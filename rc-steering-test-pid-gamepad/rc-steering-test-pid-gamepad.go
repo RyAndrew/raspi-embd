@@ -36,8 +36,9 @@ const (
 	// Maximum message size allowed from peer.
 	maxMessageSize = 512
 
-	arduinoLedBlinkRed = "5"
-	arduinoLedBlue     = "2"
+	arduinoLedBlinkRed  = "5"
+	arduinoLedBlue      = "2"
+	arduinoLedBlinkBlue = "7"
 )
 
 // var (
@@ -57,7 +58,7 @@ type WebSocketClient struct {
 }
 
 var pca9685Inst *pca9685.PCA9685
-var steeringAdcValue uint16
+var steeringAdcValue float64
 
 var jawMax int = 1820
 var jawMin int = 1510
@@ -66,15 +67,28 @@ var jawRange int = jawMax - jawMin
 var trexTiltMax int = 1690
 var trexTiltMin int = 1000
 var trexTiltRange int = trexTiltMax - trexTiltMin
+var trexTiltCurrentPos int
 
 var trexPanMax int = 1000
 var trexPanMin int = 2000
 var trexPanRange int = trexPanMax - trexPanMin
+var trexPanCurrentPos int
 
-var steeringMax uint16 = 1130
-var steeringMin uint16 = 890
-var steeringRange uint16 = steeringMax - steeringMin
-var steeringTargetPoint uint16 = (steeringRange / 2) + steeringMin
+//for ads1015
+//var steeringMax uint16 = 1080
+//var steeringMin uint16 = 700
+
+//for ads1115
+var steeringMax float64 = 8700
+var steeringMin float64 = 6000
+
+var steeringRange float64 = steeringMax - steeringMin
+var userSteeringTarget float64 = 500
+var userSteeringTargetValue float64
+
+var steeringTimerResetFlag bool = true
+var steeringTimer time.Time
+var steeringTimerMax float64 = 3
 
 var throttlePwmFreq float64 = 50.0
 
@@ -166,6 +180,9 @@ func registerClient(conn *websocket.Conn) {
 	client := &WebSocketClient{conn: conn, send: make(chan []byte, 256)}
 
 	WebSocketClientMap[client] = true
+
+	serialPortMessages <- []byte(arduinoLedBlinkBlue)
+	playMp3("trex you didnt say the magic word.mp3")
 
 	go client.webSocketClientReader()
 	go client.webSocketClientWriter()
@@ -344,11 +361,16 @@ func setTrexPanPos(pos float64) {
 
 	updatePulse := float64(trexPanRange)*pos + float64(trexPanMin)
 
-	fmt.Printf("updateTrexPan pulse %v\n", updatePulse)
+	//fmt.Printf("updateTrexPan pulse %v\n", updatePulse)
 
 	//pulseWidth := int(math.Round(1200 * throttlePwmFreqUsCalc))
 	//	fmt.Printf("set pulseLengthUs=%v, throttlePwmFreqUsCalc=%v, pulseStart=%v\n", pulseLengthUs, throttlePwmFreqUsCalc, pulseStart)
-	if err := pca9685Inst.SetPwm(1, 0, int(throttlePwmFreqUsCalc*updatePulse)); err != nil {
+	trexPanNewPos := int(throttlePwmFreqUsCalc * updatePulse)
+	if trexPanNewPos == trexPanCurrentPos {
+		return
+	}
+	trexPanCurrentPos = trexPanNewPos
+	if err := pca9685Inst.SetPwm(1, 0, trexPanNewPos); err != nil {
 		panic(err)
 	}
 }
@@ -357,11 +379,16 @@ func setTrexTiltPos(pos float64) {
 
 	updatePulse := float64(trexTiltRange)*pos + float64(trexTiltMin)
 
-	fmt.Printf("updateTrexTilt pulse %v\n", updatePulse)
+	//fmt.Printf("updateTrexTilt pulse %v\n", updatePulse)
 
 	//pulseWidth := int(math.Round(1200 * throttlePwmFreqUsCalc))
 	//	fmt.Printf("set pulseLengthUs=%v, throttlePwmFreqUsCalc=%v, pulseStart=%v\n", pulseLengthUs, throttlePwmFreqUsCalc, pulseStart)
-	if err := pca9685Inst.SetPwm(14, 0, int(throttlePwmFreqUsCalc*updatePulse)); err != nil {
+	trexTiltNewPos := int(throttlePwmFreqUsCalc * updatePulse)
+	if trexTiltNewPos == trexTiltCurrentPos {
+		return
+	}
+	trexTiltCurrentPos = trexTiltNewPos
+	if err := pca9685Inst.SetPwm(14, 0, trexTiltNewPos); err != nil {
 		panic(err)
 	}
 }
@@ -376,6 +403,9 @@ func setThrottle(pos float64) {
 	microSecondSetValue := int(pos * throttleMax / 1000)
 	//+ (throttlePwmOffset - 200) // add 800ms?
 	// + (throttlePwmMax / 2)
+
+	fmt.Printf("setThrottleMicroSeconds %v\n", (microSecondSetValue + 1000))
+
 	setThrottleMicroSeconds(microSecondSetValue + 1000)
 }
 
@@ -407,21 +437,22 @@ func setThrottleMicroSeconds(pulseLengthUs int) {
 		panic(err)
 	}
 }
-func setSteeringPosition(pos float64) {
+func setSteeringPosition(userSteeringTargetArg float64) {
+	//pos is 0-1000
 
 	//fmt.Printf("set pos=%v, ", pos)
 
-	pos = 1 - (pos / 1000)
+	userSteeringTarget = userSteeringTargetArg
+	//to flip direction:
+	//pidSet = 1.0 - (userSteeringTargetArg / 1000.0)
+	pidSet = (userSteeringTargetArg / 1000.0)
+	//fmt.Printf("pos / 1000 calc =%v, ", pos)
 
-	//fmt.Printf("set pos%%=%v, ", pos)
+	userSteeringTargetValue = math.Round(steeringRange * pidSet)
+	//fmt.Printf("userSteeringTargetValue=%v\n", userSteeringTargetValue)
 
-	steeringTargetPoint = uint16(float64(steeringRange)*pos) + steeringMin
-	//fmt.Printf("set steeringTargetPoint=%v\n", steeringTargetPoint)
-
-	pos = pos * 100
-	//fmt.Printf("set pos=%v, ", pos)
-	pidSet = pos
-	pidControl.Set(pos)
+	//fmt.Printf("set pidSet=%v, ", pidSet)
+	pidControl.Set(pidSet)
 }
 
 var pidControl *pidctrl.PIDController
@@ -431,8 +462,7 @@ var pidSet float64 = 0
 var pidAdc float64 = 0
 
 func steeringSetPointAdjust() {
-
-	successfulThreshold := .009 //1.8 % total range
+	successfulThreshold := .9 //1.8 % total range
 
 	if steeringAdcValue > steeringMax {
 		steeringAdcValue = steeringMax
@@ -441,25 +471,46 @@ func steeringSetPointAdjust() {
 		steeringAdcValue = steeringMin
 	}
 
-	pidAdc = (float64(steeringAdcValue-steeringMin) / float64(steeringRange)) * 100
-	pidError = pidSet - pidAdc
-	pidOutput = pidControl.Update(pidAdc)
+	var steerCalc float64 = steeringAdcValue - steeringMin
+	//pidAdc = (float64 / float64(steeringRange)) * 100
+	pidError = (userSteeringTargetValue - steerCalc) / steeringRange * 100
+	pidOutput = pidControl.Update(pidError)
 
-	//fmt.Printf("pidSet=%.2f, pidAdc=%.2f, pidError=%.2f, pidOutput=%.2f\n", pidSet, pidAdc, pidError, pidOutput)
+	//fmt.Printf("pidSet=%.3f, steeringAdcValue=%.f, userSteeringTargetValue=%.f, pidError=%.3f, pidOutput=%.3f\n", pidSet, (steeringAdcValue - steeringMin), userSteeringTargetValue, pidError, pidOutput)
 
-	//fmt.Printf("set=%v, actual=%v\n", steeringTargetPoint, steeringAdcValue)
-
-	if float64(steeringAdcValue) < float64(steeringTargetPoint)*float64(1+successfulThreshold) {
-		if float64(steeringAdcValue) > float64(steeringTargetPoint)*(1-successfulThreshold) {
-			stopSteeringMovement()
-			return
+	if math.Abs(pidOutput) > 20 {
+		if steeringTimerResetFlag {
+			steeringTimerResetFlag = false
+			steeringTimer = time.Now()
+		} else {
+			now := time.Now()
+			diff := now.Sub(steeringTimer)
+			if diff.Seconds() > steeringTimerMax {
+				fmt.Println("steering stall detected! stopping steering motor!")
+				stopSteeringLoopChan <- struct{}{}
+			}
 		}
+	} else {
+		steeringTimerResetFlag = true
 	}
-	//fmt.Printf("pidOutput=%.2f\n", pidOutput)
-	if math.Abs(pidOutput) < 10 {
+
+	if math.Abs(pidError) < successfulThreshold {
+		steeringTimerResetFlag = true
 		stopSteeringMovement()
 		return
 	}
+
+	// if steerCalc < userSteeringTargetValue*(1+successfulThreshold) {
+	// 	if steerCalc > userSteeringTargetValue*(1-successfulThreshold) {
+	// 		stopSteeringMovement()
+	// 		return
+	// 	}
+	// }
+	// //fmt.Printf("pidOutput=%.2f\n", pidOutput)
+	// if math.Abs(pidOutput) < 10 {
+	// 	stopSteeringMovement()
+	// 	return
+	// }
 	if pidOutput > 0 {
 		//pidOutput = pidOutput * .5
 		//fmt.Printf("pidOutput 50%%=%.2f\n", pidOutput)
@@ -479,6 +530,9 @@ func steeringSetPointAdjust() {
 }
 func startSteeringControlLoop() {
 	fmt.Println("startSteeringControlLoop")
+
+	steeringTimerResetFlag = true
+
 	checkSteeringPositionTicker := time.Tick(time.Millisecond * 20)
 	for {
 		select {
@@ -533,7 +587,7 @@ func serialPortWriter() {
 	go serialPortReader(serialPort)
 	redEyesTicker := time.Tick(time.Second * 10)
 	redEyesTickerCurrent := 1
-	//var adcTickNumber uint16 = 0
+
 	for {
 		select {
 		case message := <-serialPortMessages:
@@ -542,6 +596,8 @@ func serialPortWriter() {
 			if err != nil {
 				log.Println(err)
 			}
+			//wait after each message is sent
+			time.Sleep(50 * time.Millisecond)
 			break
 		case <-redEyesTicker:
 
@@ -567,15 +623,30 @@ func adcTicker(bus embd.I2CBus) {
 	steeringAdcValue = readAdcValue(bus)
 
 	adcValueBroadcastTicker := time.Tick(time.Millisecond * 50)
-	adcReadTicker := time.Tick(time.Millisecond * 16)
-	//var adcTickNumber uint16 = 0
+	adcReadTicker := time.Tick(time.Millisecond * 30) // 30 times per second
+	var adcTickNumber uint16 = 0
 	for {
 		select {
 		case <-adcValueBroadcastTicker:
 			jsonData := make(map[string]interface{})
 			jsonData["msgType"] = "status"
-			jsonData["steeringCurrent"] = fmt.Sprintf("%v", steeringAdcValue)
-			jsonData["steeringTargetPoint"] = fmt.Sprintf("%v", steeringTargetPoint)
+
+			//fmt.Printf("steeringAdcValue=%v\n", steeringAdcValue)
+			//fmt.Printf("steeringMin=%v\n", steeringMin)
+			//fmt.Printf("steeringRange=%v\n", steeringRange)
+			//fmt.Printf("steeringAdcValue - steeringMin =%v\n", (steeringAdcValue - steeringMin))
+
+			var steeringCurrent float64
+			if steeringAdcValue >= steeringMax {
+				steeringCurrent = 1000
+			} else {
+				steeringCurrent = (steeringAdcValue - steeringMin) * 1000.0 / steeringRange
+			}
+
+			//fmt.Printf("steeringCurrent=%.0f\n", steeringCurrent)
+			//fmt.Println()
+			jsonData["steeringCurrent"] = fmt.Sprintf("%.0f", steeringCurrent)
+			jsonData["steeringTarget"] = fmt.Sprintf("%.0f", userSteeringTarget)
 
 			//jsonData["pidOutput"] = fmt.Sprintf("%v.2", pidOutput)
 			jsonData["pidError"] = fmt.Sprintf("%.2v", pidError)
@@ -584,7 +655,7 @@ func adcTicker(bus embd.I2CBus) {
 
 			webSocketSendJsonToAllClients(jsonData)
 		case <-adcReadTicker:
-			//adcTickNumber++
+			adcTickNumber++
 
 			//start := time.Now()
 
@@ -722,8 +793,9 @@ func main() {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt)
 
+	port := "8091"
 	srv := &http.Server{
-		Addr: ":8090",
+		Addr: ":" + port,
 		//Handler:        myHandler,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
@@ -750,7 +822,7 @@ func main() {
 		registerClient(conn)
 	})
 
-	log.Println("Listening on 8090")
+	log.Println("Listening on " + port)
 
 	go func() {
 		err := srv.ListenAndServe()
@@ -760,15 +832,15 @@ func main() {
 		}
 	}()
 
-	pidControl = pidctrl.NewPIDController(1.5, .03, .03)
+	pidControl = pidctrl.NewPIDController(0, 0, 0)
 	pidControl.SetOutputLimits(-100, 100)
-	pidSet = 50
-	pidControl.Set(pidSet)
+
+	setSteeringPosition(userSteeringTarget)
 
 	//setThrottleCalibration()
 	setThrottleArm()
 
-	fmt.Printf("Setting intial steering position to %v\n", steeringTargetPoint)
+	fmt.Printf("Setting intial steering position to %v\n", userSteeringTargetValue)
 
 	go adcTicker(i2cBus)
 	go startSteeringControlLoop()
@@ -780,7 +852,9 @@ func main() {
 
 	ip := getOutboundIP()
 	fmt.Printf("outbound ip: %v\n", ip)
-	serialPortMessages <- []byte(fmt.Sprintf("t1%v", ip))
+	serialPortMessages <- []byte("t1T Rex Car Ready!")
+	serialPortMessages <- []byte("t3Connect To")
+	serialPortMessages <- []byte(fmt.Sprintf("t4IP: %v", ip))
 
 	//block waiting for channel
 	<-shutdown
