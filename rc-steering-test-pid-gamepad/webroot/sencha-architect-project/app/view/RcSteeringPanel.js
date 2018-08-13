@@ -13,12 +13,12 @@
  * Do NOT hand edit this file.
  */
 
-Ext.define('RcSteering.view.RcSteeringPanel', {
+Ext.define('RcTRex.view.RcSteeringPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.rcsteeringpanel',
 
     requires: [
-        'RcSteering.view.RcSteeringPanelViewModel',
+        'RcTRex.view.RcSteeringPanelViewModel',
         'Ext.field.Slider',
         'Ext.field.Number',
         'Ext.Button',
@@ -37,69 +37,207 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
     items: [
         {
             xtype: 'container',
-            userCls: 'steering-label',
-            margin: 5,
-            layout: 'hbox',
+            itemId: 'steering',
             items: [
                 {
                     xtype: 'container',
-                    html: 'Left',
-                    margin: '0 0 0 60'
+                    userCls: 'steering-label',
+                    margin: 5,
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            html: 'Left',
+                            margin: '0 0 0 60'
+                        },
+                        {
+                            xtype: 'container',
+                            flex: 1
+                        },
+                        {
+                            xtype: 'container',
+                            html: 'Right'
+                        }
+                    ]
                 },
                 {
-                    xtype: 'container',
-                    flex: 1
-                },
-                {
-                    xtype: 'container',
-                    html: 'Right'
+                    xtype: 'sliderfield',
+                    bind: '{steeringSetValue}',
+                    itemId: 'steeringSetPointSlider',
+                    name: 'steeringSlider',
+                    margin: '0 10 5 10',
+                    label: 'Steer',
+                    labelWidth: 65,
+                    value: 500,
+                    liveUpdate: true,
+                    maxValue: 1000
                 }
             ]
-        },
-        {
-            xtype: 'sliderfield',
-            bind: '{steeringSetValue}',
-            itemId: 'steeringSetPointSlider',
-            name: 'steeringSlider',
-            margin: '0 10 5 10',
-            label: 'Steer',
-            labelWidth: 65,
-            value: 500,
-            liveUpdate: true,
-            maxValue: 1000
         },
         {
             xtype: 'container',
-            userCls: 'steering-label',
-            margin: 5,
-            layout: 'hbox',
+            itemId: 'throttle',
             items: [
                 {
                     xtype: 'container',
-                    html: 'Reverse',
-                    margin: '0 0 0 60'
+                    userCls: 'steering-label',
+                    margin: 5,
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            html: 'Reverse',
+                            margin: '0 0 0 60'
+                        },
+                        {
+                            xtype: 'container',
+                            flex: 1
+                        },
+                        {
+                            xtype: 'container',
+                            html: 'Forward'
+                        }
+                    ]
                 },
                 {
-                    xtype: 'container',
-                    flex: 1
-                },
-                {
-                    xtype: 'container',
-                    html: 'Forward'
+                    xtype: 'sliderfield',
+                    bind: '{throttleSetValue}',
+                    itemId: 'throttleSlider',
+                    name: 'throttleSlider',
+                    margin: '0 10 5 10',
+                    label: 'Throttle',
+                    labelWidth: 65,
+                    value: 50,
+                    liveUpdate: true,
+                    maxValue: 1000
                 }
             ]
         },
         {
-            xtype: 'sliderfield',
-            bind: '{throttleSetValue}',
-            itemId: 'throttleSlider',
-            name: 'throttleSlider',
-            margin: '0 10 5 10',
-            label: 'Throttle',
-            labelWidth: 65,
-            value: 50,
-            liveUpdate: true,
-            maxValue: 1000
+            xtype: 'container',
+            itemId: 't-rex pan',
+            items: [
+                {
+                    xtype: 'container',
+                    userCls: 'steering-label',
+                    margin: 5,
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            html: 'Left',
+                            margin: '0 0 0 60'
+                        },
+                        {
+                            xtype: 'container',
+                            flex: 1
+                        },
+                        {
+                            xtype: 'container',
+                            html: 'Right'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'sliderfield',
+                    bind: '{trexPanSetValue}',
+                    itemId: 'trexPanSlider',
+                    name: 'trexPanSlider',
+                    margin: '0 10 5 10',
+                    label: 'T-Rex Pan',
+                    labelWidth: 68,
+                    value: 500,
+                    liveUpdate: true,
+                    maxValue: 1000,
+                    listeners: {
+                        change: 'onTrexPanSliderChange'
+                    }
+                }
+            ]
+        },
+        {
+            xtype: 'container',
+            itemId: 't-rex tilt',
+            items: [
+                {
+                    xtype: 'container',
+                    userCls: 'steering-label',
+                    margin: 5,
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            html: 'Down',
+                            margin: '0 0 0 60'
+                        },
+                        {
+                            xtype: 'container',
+                            flex: 1
+                        },
+                        {
+                            xtype: 'container',
+                            html: 'Up'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'sliderfield',
+                    bind: '{trexTiltSetValue}',
+                    itemId: 'trexTiltSlider',
+                    name: 'trexTiltSlider',
+                    margin: '0 10 5 10',
+                    label: 'T-Rex Tilt',
+                    labelWidth: 65,
+                    value: 500,
+                    liveUpdate: true,
+                    maxValue: 1000,
+                    listeners: {
+                        change: 'onTrexTiltSliderChange'
+                    }
+                }
+            ]
+        },
+        {
+            xtype: 'container',
+            itemId: 't-rex jaw',
+            items: [
+                {
+                    xtype: 'container',
+                    userCls: 'steering-label',
+                    margin: 5,
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            html: 'Close',
+                            margin: '0 0 0 60'
+                        },
+                        {
+                            xtype: 'container',
+                            flex: 1
+                        },
+                        {
+                            xtype: 'container',
+                            html: 'Open'
+                        }
+                    ]
+                },
+                {
+                    xtype: 'sliderfield',
+                    bind: '{trexJawSetValue}',
+                    itemId: 'trexJawSlider',
+                    name: 'trexJawSlider',
+                    margin: '0 10 5 10',
+                    label: 'T-Rex Jaw',
+                    labelWidth: 65,
+                    value: 0,
+                    liveUpdate: true,
+                    maxValue: 1000,
+                    listeners: {
+                        change: 'onTrexJawSliderChange'
+                    }
+                }
+            ]
         },
         {
             xtype: 'container',
@@ -203,7 +341,8 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                             label: 'P',
                             labelWidth: 25,
                             value: 0,
-                            clearable: false
+                            clearable: false,
+                            decimals: 3
                         },
                         {
                             xtype: 'numberfield',
@@ -213,7 +352,8 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                             label: 'I',
                             labelWidth: 25,
                             value: 0,
-                            clearable: false
+                            clearable: false,
+                            decimals: 3
                         },
                         {
                             xtype: 'numberfield',
@@ -223,7 +363,8 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                             label: 'D',
                             labelWidth: 25,
                             value: 0,
-                            clearable: false
+                            clearable: false,
+                            decimals: 3
                         },
                         {
                             xtype: 'button',
@@ -327,6 +468,69 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                             minValue: 0
                         }
                     ]
+                },
+                {
+                    xtype: 'container',
+                    itemId: 'buttonsHbox1',
+                    userCls: 'variable-box',
+                    layout: 'vbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            itemId: 'soundButtonsLabel',
+                            html: 'Sounds',
+                            margin: 10
+                        },
+                        {
+                            xtype: 'button',
+                            margin: '0 20 5 20',
+                            text: 'X: T Rex',
+                            listeners: {
+                                tap: 'onMybuttonTap3'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            margin: '5 20 5 20',
+                            text: 'Y: Next Sound',
+                            listeners: {
+                                tap: 'onMybuttonTap21'
+                            }
+                        }
+                    ]
+                },
+                {
+                    xtype: 'container',
+                    itemId: 'serialCommandHbox',
+                    userCls: 'variable-box',
+                    layout: 'vbox',
+                    items: [
+                        {
+                            xtype: 'container',
+                            itemId: 'serialCommandsLabel',
+                            html: 'Arduino Command',
+                            margin: 10
+                        },
+                        {
+                            xtype: 'textfield',
+                            itemId: 'arduinoCommand',
+                            width: 120,
+                            margin: 10,
+                            clearable: false
+                        },
+                        {
+                            xtype: 'button',
+                            margin: '0 20 5 20',
+                            text: 'Send',
+                            listeners: {
+                                tap: 'onMybuttonTap31'
+                            }
+                        },
+                        {
+                            xtype: 'container',
+                            html: '<u>LEDS:</u><BR>1-4 solid colors<BR>5-8 blik<BR><u>Text</u><BR>t1Hello World<BR>&nbsp;&nbsp;&nbsp;on line 1 show Hello World'
+                        }
+                    ]
                 }
             ]
         },
@@ -364,8 +568,8 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
                             fill: '#e8e8e8'
                         }
                     },
-                    maximum: 1800,
-                    minimum: 0,
+                    maximum: 1100,
+                    minimum: -100,
                     position: 'left',
                     title: 'Position'
                 }
@@ -417,23 +621,54 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         painted: 'onFormpanelPainted'
     },
 
-    onThrottleTextChange: function(field, newValue, oldValue, eOpts) {
-        console.log(newValue);
+    onTrexPanSliderChange: function(me, newValue, oldValue, eOpts) {
+        if(newValue && newValue.constructor === Array){
+            newValue = newValue[0];
+        }
+        this.socketSend(Ext.encode({
+            action:'updateTrexPan',
+            value:newValue
+        }));
+    },
+
+    onTrexTiltSliderChange: function(me, newValue, oldValue, eOpts) {
+        if(newValue && newValue.constructor === Array){
+            newValue = newValue[0];
+        }
+        this.socketSend(Ext.encode({
+            action:'updateTrexTilt',
+            value:newValue
+        }));
+    },
+
+    onTrexJawSliderChange: function(me, newValue, oldValue, eOpts) {
         if(newValue && newValue.constructor === Array){
             newValue = newValue[0];
         }
 
-        this.sendUpdateThrottle(newValue);
+        this.socketSend(Ext.encode({
+            action:'updateTrexJaw',
+            value:newValue
+        }));
+    },
+
+    onThrottleTextChange: function(field, newValue, oldValue, eOpts) {
+        if(newValue && newValue.constructor === Array){
+            newValue = newValue[0];
+        }
+
+        this.socketSend(Ext.encode({
+            action:'updateThrottle',
+            value:newValue
+        }));
     },
 
     onSteeringSetPointTextChange: function(field, newValue, oldValue, eOpts) {
-        console.log(newValue);
         if(newValue && newValue.constructor === Array){
             newValue = newValue[0];
         }
 
         if(!this.lastSteeringChangeDefered){
-            console.log("Steering Set = "+newValue);
             this.lastSteeringChangeDefered = true;
 
             if(this.lastSent != newValue){
@@ -490,9 +725,37 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         }));
     },
 
+    onMybuttonTap3: function(button, e, eOpts) {
+        this.trexscream();
+    },
+
+    onMybuttonTap21: function(button, e, eOpts) {
+        this.playnextsound();
+    },
+
+    onMybuttonTap31: function(button, e, eOpts) {
+        var arduinoCommand = this.queryById('arduinoCommand');
+
+        var command = arduinoCommand.getValue();
+        if(command == ''){
+            Ext.Msg.alert(' ','Please enter an Arduino Command');
+            return;
+        }
+
+        this.socketSend(Ext.encode({
+            action:'arduinoCommand',
+            command:command
+        }));
+
+    },
+
     onFormpanelPainted: function(sender, element, eOpts) {
         this.websocketInit();
         this.gamepadInit();
+
+
+        this.trexPanSlider = this.queryById('trexPanSlider');
+        this.trexTiltSlider = this.queryById('trexTiltSlider');
 
         this.fieldGamepadLeftRight = this.queryById('gamepadRightLeft');
         this.fieldGamepadFwd = this.queryById('gamepadFwd');
@@ -501,7 +764,21 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         this.fieldSteeringSetPointText = this.queryById('steeringSetPointText');
         this.fieldThrottleText = this.queryById('throttleText');
 
+        this.wsPanLast = 0;
+        this.wsTiltLast = 0;
+        this.wsThrottleLast = 0;
+    },
 
+    trexscream: function() {
+        this.socketSend(Ext.encode({
+            action:'trexscream'
+        }));
+    },
+
+    playnextsound: function() {
+        this.socketSend(Ext.encode({
+            action:'playnextsound'
+        }));
     },
 
     websocketInit: function() {
@@ -591,13 +868,6 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         }));
     },
 
-    sendUpdateThrottle: function(value) {
-        this.socketSend(Ext.encode({
-            action:'updateThrottle',
-            value:value
-        }));
-    },
-
     msgUpdateStatus: function(jsonData) {
         // this.recievedMessages++;
         this.chartedMessages++;
@@ -623,7 +893,7 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
 
         // this.chartStore.loadData(this.chartArray);
 
-        this.chartStore.loadData([[this.chartedMessages, jsonData.steeringCurrent, jsonData.steeringTargetPoint]], true);
+        this.chartStore.loadData([[this.chartedMessages, jsonData.steeringCurrent, jsonData.steeringTarget]], true);
 
         //this.steeringChart.resumeAnimation();
 
@@ -663,6 +933,8 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
             console.log(e);
 
             this.appendDebugOutput("Gamepad disconnected at index "+e.gamepad.index+", id "+e.gamepad.id);
+
+            cancelInterval(this.gamePadLoops[e.gamepad.id]['loop'])
     },
 
     gamepadBeginLoop: function(gamepad) {
@@ -690,6 +962,7 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
             gamepad = gamepadUpdate[gamepad.index];
         }else{
             console.log('gamepad no longer available?');
+            cancelInterval(this.gamePadLoops[e.gamepad.id]['loop']);
             return;
         }
         //console.log(gamepad);
@@ -699,15 +972,44 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
 
         //console.log('Right: '+gamepad.axes[2]);
 
-        var leftRight = gamepad.axes[2];
-        var fwd = gamepad.buttons[7].value;
-        var rev = gamepad.buttons[6].value;
+        //X button
+        if(gamepad.buttons[2].value == 1 && this.button2lastValue != gamepad.buttons[2].value){
+            this.trexscream();
+        }
+        this.button2lastValue = gamepad.buttons[2].value;
 
-        this.fieldGamepadLeftRight.setValue(leftRight);
+        //Y button
+        if(gamepad.buttons[3].value == 1 && this.button3lastValue != gamepad.buttons[3].value){
+            this.playnextsound();
+        }
+        this.button3lastValue = gamepad.buttons[3].value;
+
+
+        var lefStickX = gamepad.axes[0] - .08;
+        lefStickX = Math.round((lefStickX * 500) + 500);
+        if(lefStickX !== this.wsPanLast ){
+            this.wsPanLast = lefStickX;
+            this.trexPanSlider.setValue(lefStickX);
+        }
+
+        var lefStickY = gamepad.axes[1];
+        lefStickY = Math.round((lefStickY * 500) + 500);
+        if(lefStickY !== this.wsTiltLast ){
+            this.wsTiltLast = lefStickY;
+            this.trexTiltSlider.setValue(lefStickY);
+        }
+
+
+        var rightStickX = gamepad.axes[2];
+        this.fieldGamepadLeftRight.setValue(rightStickX);
+
+        var fwd = gamepad.buttons[7].value;
         this.fieldGamepadFwd.setValue(fwd);
+
+        var rev = gamepad.buttons[6].value;
         this.fieldGamepadRev.setValue(rev);
 
-        var steeringSet = Math.round((leftRight * 500) + 500);
+        var steeringSet = Math.round((rightStickX * 500) + 500);
         this.fieldSteeringSetPointText.setValue(steeringSet);
 
 
@@ -723,7 +1025,11 @@ Ext.define('RcSteering.view.RcSteeringPanel', {
         }
 
         if(setThrottle !== null){
-            this.fieldThrottleText.setValue(setThrottle);
+
+            if(setThrottle !== this.wsThrottleLast ){
+                this.wsThrottleLast = setThrottle;
+                this.fieldThrottleText.setValue(setThrottle);
+            }
         }
 
     },

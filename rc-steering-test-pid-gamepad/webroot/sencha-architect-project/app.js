@@ -23,10 +23,10 @@ Ext.application({
     views: [
         'RcSteeringPanel'
     ],
-    name: 'RcSteering',
+    name: 'RcTRex',
 
     launch: function() {
-        Ext.create('RcSteering.view.RcSteeringPanel', {fullscreen: true});
+        Ext.create('RcTRex.view.RcSteeringPanel', {fullscreen: true});
     }
 
 });

@@ -13,7 +13,7 @@
  * Do NOT hand edit this file.
  */
 
-Ext.define('RcSteering.view.RcSteeringPanelViewController', {
+Ext.define('RcTRex.view.RcSteeringPanelViewController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.rcsteeringpanel'
 });

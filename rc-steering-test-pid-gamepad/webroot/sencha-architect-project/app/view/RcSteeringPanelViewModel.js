@@ -13,7 +13,7 @@
  * Do NOT hand edit this file.
  */
 
-Ext.define('RcSteering.view.RcSteeringPanelViewModel', {
+Ext.define('RcTRex.view.RcSteeringPanelViewModel', {
     extend: 'Ext.app.ViewModel',
     alias: 'viewmodel.rcsteeringpanel',
 
