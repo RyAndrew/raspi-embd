@@ -79,8 +79,8 @@ var trexPanCurrentPos int
 //var steeringMin uint16 = 700
 
 //for ads1115
-var steeringMax float64 = 8700
-var steeringMin float64 = 6000
+var steeringMax float64 = 10500
+var steeringMin float64 = 6500
 
 var steeringRange float64 = steeringMax - steeringMin
 var userSteeringTarget float64 = 500
@@ -442,9 +442,9 @@ func setSteeringPosition(userSteeringTargetArg float64) {
 
 	//fmt.Printf("set pos=%v, ", pos)
 
-	userSteeringTarget = userSteeringTargetArg
+	userSteeringTarget = 1000 - userSteeringTargetArg
 	//to flip direction:
-	//pidSet = 1.0 - (userSteeringTargetArg / 1000.0)
+	//pidSet = (userSteeringTargetArg / 1000.0)
 	pidSet = (userSteeringTargetArg / 1000.0)
 	//fmt.Printf("pos / 1000 calc =%v, ", pos)
 
@@ -516,16 +516,16 @@ func steeringSetPointAdjust() {
 		//fmt.Printf("pidOutput 50%%=%.2f\n", pidOutput)
 
 		setPwmChanPercent(2, int(pidOutput))
-		setPwmChanPercent(3, 100)
-		setPwmChanPercent(4, 0)
+		setPwmChanPercent(3, 0)
+		setPwmChanPercent(4, 100)
 	} else {
 		pidOutput = pidOutput * -1
 		//pidOutput = pidOutput * .5
 		//fmt.Printf("pidOutput 50%%=%.2f\n", pidOutput)
 
 		setPwmChanPercent(2, int(pidOutput))
-		setPwmChanPercent(3, 0)
-		setPwmChanPercent(4, 100)
+		setPwmChanPercent(3, 100)
+		setPwmChanPercent(4, 0)
 	}
 }
 func startSteeringControlLoop() {
@@ -642,6 +642,7 @@ func adcTicker(bus embd.I2CBus) {
 			} else {
 				steeringCurrent = (steeringAdcValue - steeringMin) * 1000.0 / steeringRange
 			}
+			steeringCurrent = 1000 - steeringCurrent
 
 			//fmt.Printf("steeringCurrent=%.0f\n", steeringCurrent)
 			//fmt.Println()
@@ -663,7 +664,7 @@ func adcTicker(bus embd.I2CBus) {
 
 			//elapsed := time.Since(start)
 
-			//fmt.Printf("%4.d Read ADC Value %d\n", adcTickNumber, steeringAdcValue)
+			fmt.Printf("%4.d Read ADC Value %d\n", adcTickNumber, steeringAdcValue)
 
 			//fmt.Printf(" time: %s\n", elapsed)
 		}
