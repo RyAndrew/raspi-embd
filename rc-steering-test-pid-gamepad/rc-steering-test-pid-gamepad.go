@@ -69,8 +69,8 @@ var trexTiltMin int = 1000
 var trexTiltRange int = trexTiltMax - trexTiltMin
 var trexTiltCurrentPos int
 
-var trexPanMax int = 1000
-var trexPanMin int = 2000
+var trexPanMax int = 2000
+var trexPanMin int = 1000
 var trexPanRange int = trexPanMax - trexPanMin
 var trexPanCurrentPos int
 
@@ -80,7 +80,7 @@ var trexPanCurrentPos int
 
 //for ads1115
 var steeringMax float64 = 10500
-var steeringMin float64 = 6500
+var steeringMin float64 = 6700
 
 var steeringRange float64 = steeringMax - steeringMin
 var userSteeringTarget float64 = 500
@@ -281,6 +281,9 @@ func processClientMessage(client *WebSocketClient, message []byte) {
 		go trexScreamMp3()
 		serialPortMessages <- []byte(arduinoLedBlinkRed)
 		break
+	case "cycleeyecolor":
+		cycleEyeColor()
+		break
 	case "updatePidConstants":
 		//fmt.Printf("%+v\n", jsonData["value"])
 		invalidData := false
@@ -361,10 +364,6 @@ func setTrexPanPos(pos float64) {
 
 	updatePulse := float64(trexPanRange)*pos + float64(trexPanMin)
 
-	//fmt.Printf("updateTrexPan pulse %v\n", updatePulse)
-
-	//pulseWidth := int(math.Round(1200 * throttlePwmFreqUsCalc))
-	//	fmt.Printf("set pulseLengthUs=%v, throttlePwmFreqUsCalc=%v, pulseStart=%v\n", pulseLengthUs, throttlePwmFreqUsCalc, pulseStart)
 	trexPanNewPos := int(throttlePwmFreqUsCalc * updatePulse)
 	if trexPanNewPos == trexPanCurrentPos {
 		return
@@ -442,10 +441,10 @@ func setSteeringPosition(userSteeringTargetArg float64) {
 
 	//fmt.Printf("set pos=%v, ", pos)
 
-	userSteeringTarget = 1000 - userSteeringTargetArg
+	userSteeringTarget = userSteeringTargetArg
 	//to flip direction:
 	//pidSet = (userSteeringTargetArg / 1000.0)
-	pidSet = (userSteeringTargetArg / 1000.0)
+	pidSet = 1 - (userSteeringTargetArg / 1000.0)
 	//fmt.Printf("pos / 1000 calc =%v, ", pos)
 
 	userSteeringTargetValue = math.Round(steeringRange * pidSet)
@@ -624,7 +623,7 @@ func adcTicker(bus embd.I2CBus) {
 
 	adcValueBroadcastTicker := time.Tick(time.Millisecond * 50)
 	adcReadTicker := time.Tick(time.Millisecond * 30) // 30 times per second
-	var adcTickNumber uint16 = 0
+	//var adcTickNumber uint16 = 0
 	for {
 		select {
 		case <-adcValueBroadcastTicker:
@@ -646,6 +645,7 @@ func adcTicker(bus embd.I2CBus) {
 
 			//fmt.Printf("steeringCurrent=%.0f\n", steeringCurrent)
 			//fmt.Println()
+			jsonData["steeringCurrentAdc"] = fmt.Sprintf("%.0f", steeringAdcValue)
 			jsonData["steeringCurrent"] = fmt.Sprintf("%.0f", steeringCurrent)
 			jsonData["steeringTarget"] = fmt.Sprintf("%.0f", userSteeringTarget)
 
@@ -656,7 +656,7 @@ func adcTicker(bus embd.I2CBus) {
 
 			webSocketSendJsonToAllClients(jsonData)
 		case <-adcReadTicker:
-			adcTickNumber++
+			//adcTickNumber++
 
 			//start := time.Now()
 
@@ -664,7 +664,7 @@ func adcTicker(bus embd.I2CBus) {
 
 			//elapsed := time.Since(start)
 
-			fmt.Printf("%4.d Read ADC Value %d\n", adcTickNumber, steeringAdcValue)
+			//fmt.Printf("%4.d Read ADC Value %d\n", adcTickNumber, steeringAdcValue)
 
 			//fmt.Printf(" time: %s\n", elapsed)
 		}
@@ -695,6 +695,17 @@ func playnextsound() {
 	if mp3filesCurrent > mp3filesLen {
 		mp3filesCurrent = 0
 	}
+}
+
+var eyeColorCurrent int = 1
+
+func cycleEyeColor() {
+	if eyeColorCurrent > 8 {
+		eyeColorCurrent = 1
+	}
+	fmt.Printf("send eye color %v\n", eyeColorCurrent)
+	serialPortMessages <- []byte(fmt.Sprintf("%v", eyeColorCurrent))
+	eyeColorCurrent++
 }
 func trexScreamMp3() {
 	playMp3("TRex screams.mp3")
@@ -833,7 +844,7 @@ func main() {
 		}
 	}()
 
-	pidControl = pidctrl.NewPIDController(0, 0, 0)
+	pidControl = pidctrl.NewPIDController(.7, 0, .2)
 	pidControl.SetOutputLimits(-100, 100)
 
 	setSteeringPosition(userSteeringTarget)
