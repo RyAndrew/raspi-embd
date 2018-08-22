@@ -396,16 +396,26 @@ func stopThrottle() {
 }
 func setThrottle(pos float64) {
 	//subtract too to start at 800ms
-	throttleMax := 1000.0 //only operate within the first 3ms
+	//throttleMax := 500.0 //only operate within the first 2ms
 	//940 or less = brake
+	microSecondSetValue := 1500
+	if pos > 490 && pos < 510 {
+		pos = 500
+	} else {
+		if pos >= 500 {
+			microSecondSetValue = int((pos / 1000.0) * 50.0)
+			microSecondSetValue += 1600
+		} else {
+			microSecondSetValue = int(((500 - pos) / 500.0) * 30.0)
+			microSecondSetValue = 1470 - microSecondSetValue
+		}
+	}
 
-	microSecondSetValue := int(pos * throttleMax / 1000)
-	//+ (throttlePwmOffset - 200) // add 800ms?
-	// + (throttlePwmMax / 2)
+	//microSecondSetValue := int((pos / 1000) * throttleMax)
 
-	fmt.Printf("setThrottleMicroSeconds %v\n", (microSecondSetValue + 1000))
+	fmt.Printf("setThrottleMicroSeconds %v\n", (microSecondSetValue))
 
-	setThrottleMicroSeconds(microSecondSetValue + 1000)
+	setThrottleMicroSeconds(microSecondSetValue)
 }
 
 func setThrottleFullRange(pulseEnd int) {
@@ -689,6 +699,7 @@ var mp3files = [8]string{
 var mp3filesLen = len(mp3files) - 1
 
 func playnextsound() {
+	cycleEyeColor()
 	playMp3(mp3files[mp3filesCurrent])
 	fmt.Printf("playing %v\n", mp3files[mp3filesCurrent])
 	mp3filesCurrent++
