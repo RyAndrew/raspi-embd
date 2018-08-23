@@ -403,7 +403,7 @@ func setThrottle(pos float64) {
 		pos = 500
 	} else {
 		if pos >= 500 {
-			microSecondSetValue = int((pos / 1000.0) * 50.0)
+			microSecondSetValue = int((pos / 1000.0) * 100.0)
 			microSecondSetValue += 1600
 		} else {
 			microSecondSetValue = int(((500 - pos) / 500.0) * 30.0)
@@ -471,7 +471,7 @@ var pidSet float64 = 0
 var pidAdc float64 = 0
 
 func steeringSetPointAdjust() {
-	successfulThreshold := .9 //1.8 % total range
+	successfulThreshold := 8.0 //within 8% for successful steer
 
 	if steeringAdcValue > steeringMax {
 		steeringAdcValue = steeringMax
@@ -502,7 +502,7 @@ func steeringSetPointAdjust() {
 	} else {
 		steeringTimerResetFlag = true
 	}
-
+	fmt.Printf("pidError=%.3f, successfulThreshold=%v\n", math.Abs(pidError), successfulThreshold)
 	if math.Abs(pidError) < successfulThreshold {
 		steeringTimerResetFlag = true
 		stopSteeringMovement()
